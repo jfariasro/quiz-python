@@ -97,28 +97,80 @@ class QuizClient {
         }
     }
     
-    joinSession() {
-        const sessionIdInput = document.getElementById('session-id');
-        const participantNameInput = document.getElementById('participant-name');
+    joinSession(data) {
+        console.log('Intentando unirse a la sesión:', data);
         
-        if (!sessionIdInput || !participantNameInput) {
-            this.showAlert('Por favor, completa todos los campos', 'warning');
-            return;
+        // Si recibe datos como parámetro, usarlos; de lo contrario, obtenerlos del formulario
+        let sessionId, participantName;
+        
+        if (data && data.sessionId && data.name) {
+            sessionId = data.sessionId;
+            participantName = data.name;
+        } else {
+            const sessionIdInput = document.getElementById('session-id');
+            const participantNameInput = document.getElementById('participant-name');
+            
+            if (!sessionIdInput || !participantNameInput) {
+                this.showAlert('Por favor, completa todos los campos', 'warning');
+                return;
+            }
+            
+            sessionId = sessionIdInput.value.trim();
+            participantName = participantNameInput.value.trim();
         }
-        
-        const sessionId = sessionIdInput.value.trim();
-        const participantName = participantNameInput.value.trim();
         
         if (!sessionId || !participantName) {
             this.showAlert('Por favor, completa todos los campos', 'warning');
             return;
         }
         
+        console.log(`Uniendo a la sesión ${sessionId} con nombre ${participantName}`);
+        
         this.sessionId = sessionId;
-        this.socket.emit('join_session', {
-            session_id: sessionId,
-            participant_name: participantName
+        
+        // Usar método alternativo: enviar mediante fetch directamente
+        fetch('/join', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                sessionId: sessionId,
+                name: participantName,
+                participantName: participantName,
+                participant_name: participantName
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Respuesta del servidor:', data);
+            if (data.success && data.participant_id) {
+                // Almacenar ID del participante
+                this.participantId = data.participant_id;
+                
+                // Ahora conectar por socket con IDs confirmados
+                this.socket.emit('join_session', {
+                    session_id: sessionId,
+                    participant_id: data.participant_id,
+                    name: participantName
+                });
+                
+                // Redirigir si es necesario
+                if (data.redirect_url) {
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url;
+                    }, 1000);
+                }
+            } else {
+                this.showAlert(data.error || 'Error al unirse a la sesión', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            this.showAlert('Error de conexión. Inténtalo de nuevo.', 'danger');
         });
+        
+        this.showLoading(document.getElementById('join-btn'));
         
         this.showLoading(document.getElementById('join-btn'));
     }

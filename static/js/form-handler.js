@@ -162,14 +162,25 @@ class FormHandler {
             input.parentNode.appendChild(errorElement);
         }
         
+        // Buscar o crear elemento de éxito
+        let validElement = input.parentNode.querySelector('.valid-feedback');
+        if (!validElement) {
+            validElement = document.createElement('div');
+            validElement.className = 'valid-feedback';
+            input.parentNode.appendChild(validElement);
+        }
+        
         if (isValid) {
             input.classList.add('is-valid');
             errorElement.textContent = '';
             errorElement.style.display = 'none';
+            validElement.textContent = '¡Perfecto!';
+            validElement.style.display = 'block';
         } else {
             input.classList.add('is-invalid');
             errorElement.textContent = errorMessage;
             errorElement.style.display = 'block';
+            validElement.style.display = 'none';
         }
     }
     
@@ -235,12 +246,20 @@ class FormHandler {
             return;
         }
         
+        // Preparar datos para enviar al servidor (asegurar que se envía "name" como espera el backend)
+        const sendData = {
+            sessionId: data.sessionId,
+            name: data.participantName,
+            participantName: data.participantName,
+            participant_name: data.participantName // Incluir múltiples claves para compatibilidad
+        };
+        
         // Emitir evento para que el QuizClient lo maneje
         if (window.quizClient) {
-            window.quizClient.joinSession();
+            window.quizClient.joinSession(sendData);
         } else {
             // Fallback: enviar por fetch
-            this.submitToServer(form, '/api/join-session', data);
+            this.submitToServer(form, '/join', sendData);
         }
     }
     
@@ -261,6 +280,11 @@ class FormHandler {
     }
     
     submitToServer(form, url, data) {
+        // Mostrar mensaje de carga
+        this.showFormInfo(form, "Enviando datos...");
+        
+        console.log("Enviando datos al servidor:", url, data);
+        
         fetch(url, {
             method: 'POST',
             headers: {
@@ -268,9 +292,15 @@ class FormHandler {
             },
             body: JSON.stringify(data)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error de servidor: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(result => {
             this.hideLoading(form);
+            console.log("Respuesta del servidor:", result);
             
             if (result.success) {
                 this.showFormSuccess(form, result.message || 'Operación exitosa');
@@ -288,7 +318,18 @@ class FormHandler {
                     this.clearValidation(form);
                 }
             } else {
-                this.showFormError(form, result.message || 'Error en el servidor');
+                // Si hay un error específico, mostrarlo
+                this.showFormError(form, result.error || result.message || 'Error en el servidor');
+                
+                // Si hay errores de validación específicos, mostrarlos en los campos correspondientes
+                if (result.validationErrors) {
+                    for (const field in result.validationErrors) {
+                        const input = form.querySelector(`[name="${field}"]`);
+                        if (input) {
+                            this.showFieldValidation(input, false, result.validationErrors[field]);
+                        }
+                    }
+                }
             }
         })
         .catch(error => {

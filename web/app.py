@@ -8,6 +8,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 import json
 import logging
 from typing import Optional, Dict, Any
+import time
 
 from utils.file_manager import FileManager
 from utils.network_utils import NetworkUtils
@@ -110,12 +111,34 @@ def register_routes(app: Flask):
         """Endpoint para unirse a un quiz."""
         data = request.get_json()
         
-        if not data or 'name' not in data:
-            return jsonify({'error': 'Nombre requerido'}), 400
+        if not data:
+            return jsonify({'success': False, 'error': 'Datos no proporcionados'}), 400
         
-        name = data['name'].strip()
+        # Extraer el nombre de cualquier clave que pueda contenerlo
+        name = None
+        name_keys = ['name', 'participantName', 'participant_name', 'userName']
+        
+        # Log para depuración
+        logger.info(f"Datos recibidos en /join: {json.dumps(data)}")
+        
+        for key in name_keys:
+            if key in data and data[key] and isinstance(data[key], str):
+                potential_name = data[key].strip()
+                if potential_name:  # Si no está vacío
+                    name = potential_name
+                    logger.info(f"Nombre encontrado en clave '{key}': {name}")
+                    break
+        
+        # Si todavía no hay nombre, usar uno por defecto
         if not name:
-            return jsonify({'error': 'Nombre no puede estar vacío'}), 400
+            # Obtener sesión activa para contar participantes
+            active_sessions = quiz_manager.get_active_sessions()
+            if active_sessions:
+                session = quiz_manager.get_session(active_sessions[0])
+                name = f"Jugador {len(session.participants) + 1}"
+            else:
+                name = "Jugador Nuevo"
+            logger.info(f"Usando nombre por defecto: {name}")
         
         # Obtener sesión activa
         active_sessions = quiz_manager.get_active_sessions()
@@ -145,42 +168,85 @@ def register_routes(app: Flask):
     @app.route('/lobby/<participant_id>')
     def lobby(participant_id: str):
         """Sala de espera para participantes."""
-        # Verificar que el participante existe
-        active_sessions = quiz_manager.get_active_sessions()
-        if not active_sessions:
-            return redirect(url_for('index'))
-        
-        session = quiz_manager.get_session(active_sessions[0])
-        if participant_id not in session.participants:
-            return redirect(url_for('index'))
-        
-        participant = session.participants[participant_id]
-        
-        return render_template('lobby.html',
-                             participant_id=participant_id,
-                             participant_name=participant['name'],
-                             session_id=session.session_id,
-                             quiz_title=session.quiz_data.get('title', 'Quiz'))
+        try:
+            # Verificar que el participante existe
+            active_sessions = quiz_manager.get_active_sessions()
+            if not active_sessions:
+                logger.warning(f"No hay sesiones activas al intentar acceder al lobby con participant_id={participant_id}")
+                return redirect(url_for('index'))
+            
+            session = quiz_manager.get_session(active_sessions[0])
+            if not session:
+                logger.warning(f"No se encontró la sesión para el lobby con participant_id={participant_id}")
+                return redirect(url_for('index'))
+                
+            # Verificar si el participante existe en la sesión    
+            if participant_id not in session.participants:
+                logger.warning(f"Participante {participant_id} no encontrado en la sesión")
+                
+                # Intentar recuperar el participante del localStorage si está configurado en el cliente
+                return render_template('error_fixed.html',
+                                    error_code=404,
+                                    error_message="No se encontró tu registro de participante. Intenta unirte nuevamente.",
+                                    participant_id=None)
+            
+            participant = session.participants[participant_id]
+            
+            # Verificar que los datos del quiz son válidos
+            quiz_title = "Quiz"
+            if hasattr(session, 'quiz_data') and isinstance(session.quiz_data, dict):
+                quiz_title = session.quiz_data.get('title', 'Quiz')
+            
+            return render_template('lobby.html',
+                                participant_id=participant_id,
+                                participant_name=participant['name'],
+                                session_id=session.session_id,
+                                quiz_title=quiz_title)
+                                
+        except Exception as e:
+            logger.error(f"Error en la página de lobby: {e}", exc_info=True)
+            return render_template('error_fixed.html',
+                                error_code=500,
+                                error_message="Error al cargar la sala de espera. Por favor, intenta unirte nuevamente.",
+                                participant_id=None)
     
     @app.route('/quiz/<participant_id>')
     def quiz_interface(participant_id: str):
         """Interfaz principal del quiz para participantes."""
-        # Verificar participante
-        active_sessions = quiz_manager.get_active_sessions()
-        if not active_sessions:
-            return redirect(url_for('index'))
-        
-        session = quiz_manager.get_session(active_sessions[0])
-        if participant_id not in session.participants:
-            return redirect(url_for('index'))
-        
-        participant = session.participants[participant_id]
-        
-        return render_template('quiz.html',
-                             participant_id=participant_id,
-                             participant_name=participant['name'],
-                             session_id=session.session_id,
-                             quiz_title=session.quiz_data.get('title', 'Quiz'))
+        try:
+            # Verificar participante
+            active_sessions = quiz_manager.get_active_sessions()
+            if not active_sessions:
+                logger.warning("No hay sesiones activas para quiz_interface")
+                return redirect(url_for('index'))
+            
+            session = quiz_manager.get_session(active_sessions[0])
+            if not session:
+                logger.warning(f"No se encontró sesión para quiz_interface")
+                return redirect(url_for('index'))
+                
+            if participant_id not in session.participants:
+                logger.warning(f"Participante {participant_id} no encontrado en la sesión")
+                return redirect(url_for('index'))
+            
+            participant = session.participants[participant_id]
+            
+            # Obtener título del quiz de forma segura
+            quiz_title = "Quiz sin título"
+            if hasattr(session, 'quiz_data') and isinstance(session.quiz_data, dict):
+                quiz_title = session.quiz_data.get('title', 'Quiz')
+            
+            return render_template('quiz.html',
+                                participant_id=participant_id,
+                                participant_name=participant['name'],
+                                session_id=session.session_id,
+                                quiz_title=quiz_title)
+        except Exception as e:
+            logger.error(f"Error en quiz_interface: {e}", exc_info=True)
+            return render_template('error_fixed.html', 
+                                error_code=500,
+                                error_message='Error al cargar el quiz. Vuelve a intentarlo.',
+                                participant_id=participant_id)
     
     @app.route('/api/session/status')
     def session_status_general():
@@ -249,6 +315,18 @@ def register_routes(app: Flask):
             logger.error(f"Error al crear sesión desde admin: {e}")
             return jsonify({'error': str(e)}), 500
     
+    @app.route('/api/status')
+    def api_status():
+        """Endpoint para verificar el estado del servidor para el frontend."""
+        active_sessions = quiz_manager.get_active_sessions()
+        
+        return jsonify({
+            'status': 'online',
+            'server_time': time.time(),
+            'active_sessions': len(active_sessions),
+            'server_version': '1.0.0'
+        })
+    
     @app.errorhandler(404)
     def not_found(error):
         """Página de error 404."""
@@ -259,10 +337,26 @@ def register_routes(app: Flask):
     @app.errorhandler(500)
     def internal_error(error):
         """Página de error 500."""
-        logger.error(f"Error interno: {error}")
-        return render_template('error.html',
-                             error_code=500,
-                             error_message='Error interno del servidor'), 500
+        try:
+            logger.error(f"Error interno: {error}", exc_info=True)
+            
+            # Obtener referrer para determinar de dónde vino el usuario
+            referrer = request.referrer or ""
+            
+            # Si venía de la página de lobby o quiz, incluir un botón para volver a intentarlo
+            participant_id = None
+            if '/lobby/' in referrer or '/quiz/' in referrer:
+                participant_id = referrer.split('/')[-1]
+                logger.info(f"Error en sesión de participante: {participant_id}")
+            
+            return render_template('error_fixed.html',
+                                error_code=500,
+                                error_message='Error interno del servidor. Intenta nuevamente en unos momentos.',
+                                participant_id=participant_id), 500
+        except Exception as e:
+            # En caso de error en el manejador de error, usar una respuesta simple
+            logger.critical(f"Error en el manejador de errores: {e}", exc_info=True)
+            return "Error interno del servidor (500). Por favor, intenta nuevamente más tarde.", 500
 
 def register_socketio_events(socketio: SocketIO):
     """Registrar eventos de WebSocket."""
@@ -283,6 +377,26 @@ def register_socketio_events(socketio: SocketIO):
         """Participante se une a una sesión via WebSocket."""
         session_id = data.get('session_id')
         participant_id = data.get('participant_id')
+        participant_name = data.get('name')  # Permitir recibir el nombre directamente
+        
+        # Si se recibe nombre pero no ID, crear un nuevo participante
+        if session_id and participant_name and not participant_id:
+            logger.info(f"Nuevo participante intentando unirse: {participant_name}")
+            
+            # Generar ID para el nuevo participante
+            import uuid
+            participant_id = str(uuid.uuid4())
+            
+            # Intentar agregar al participante
+            session = quiz_manager.get_session(session_id)
+            if session and session.add_participant(participant_id, participant_name):
+                logger.info(f"Nuevo participante agregado: {participant_name} con ID {participant_id}")
+                
+                # Informar al cliente su ID asignado
+                emit('participant_registered', {'participant_id': participant_id})
+            else:
+                emit('error', {'message': 'No se pudo unir a la sesión'})
+                return
         
         if not session_id or not participant_id:
             emit('error', {'message': 'Datos faltantes'})
@@ -357,6 +471,55 @@ def register_socketio_events(socketio: SocketIO):
             })
         
         logger.debug(f"Admin conectado a sesión {session_id}")
+
+    @socketio.on('get_current_question')
+    def handle_get_current_question(data):
+        """Obtener la pregunta actual si el participante se ha perdido."""
+        session_id = data.get('session_id')
+        participant_id = data.get('participant_id')
+        
+        if not session_id or not participant_id:
+            emit('error', {'message': 'Datos faltantes'})
+            return
+        
+        session = quiz_manager.get_session(session_id)
+        if not session:
+            emit('error', {'message': 'Sesión no encontrada'})
+            return
+        
+        if participant_id not in session.participants:
+            emit('error', {'message': 'Participante no encontrado'})
+            return
+            
+        # Enviar el estado actual de la sesión
+        emit('session_state', {
+            'state': session.state.value,
+            'current_question': session.current_question_index,
+            'total_questions': len(session.quiz_data.get('questions', []))
+        })
+        
+        # Si la sesión está en una pregunta, enviar la pregunta actual
+        if session.state in [QuizState.QUESTION, QuizState.COLLECTING] and session.current_question_index >= 0:
+            try:
+                current_question = session.quiz_data['questions'][session.current_question_index]
+                
+                # Calcular tiempo restante
+                elapsed_time = time.time() - session.question_start_time
+                time_limit = session.settings.get('question_time_limit', 30)
+                remaining_time = max(1, time_limit - int(elapsed_time))
+                
+                # Enviar datos de la pregunta sin la respuesta correcta
+                emit('question_started', {
+                    'question_index': session.current_question_index,
+                    'question': current_question['question'],
+                    'options': current_question['options'],
+                    'time_limit': remaining_time
+                })
+                
+                logger.info(f"Pregunta actual enviada a participante {participant_id}")
+            except Exception as e:
+                logger.error(f"Error al enviar pregunta actual: {e}")
+                emit('error', {'message': 'Error al cargar la pregunta actual'})
 
 def setup_session_callbacks(session_id: str):
     """Configurar callbacks para eventos de la sesión."""

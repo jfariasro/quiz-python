@@ -5,30 +5,31 @@
 
 /* ===== VARIABLES CSS ===== */
 :root {
-    /* Colores principales - Paleta moderna y profesional mejorada */
-    --color-primario: #4361ee;
-    --color-secundario: #3a86ff;
-    --color-exito: #06d6a0;
-    --color-advertencia: #ff9e00;
-    --color-peligro: #ef476f;
-    --color-info: #4ea8de;
-    --color-oscuro: #5a6478;         /* Reemplazo para negro */
-    --color-texto: #4a5568;          /* Color de texto principal */
-    --color-texto-secundario: #718096; /* Color de texto secundario */
-    --color-claro: #f0f2fa;
+    /* Colores principales - Paleta profesional y moderna */
+    --color-primario: #3274d9;       /* Azul moderno */
+    --color-secundario: #2ecc71;     /* Verde moderno */
+    --color-exito: #27ae60;          /* Verde éxito */
+    --color-advertencia: #f39c12;    /* Amarillo advertencia */
+    --color-peligro: #e74c3c;        /* Rojo peligro */
+    --color-info: #3498db;           /* Azul info */
+    --color-oscuro: #2c3e50;         /* Azul oscuro */
+    --color-texto: #2c3e50;          /* Color de texto principal */
+    --color-texto-secundario: #7f8c8d; /* Color de texto secundario */
+    --color-claro: #ecf0f1;
     --color-blanco: #ffffff;
-    --color-fondo: #f8f9fa;
+    --color-fondo: #f9fafc;
     
-    /* Gradientes */
-    --gradiente-primario: linear-gradient(135deg, #4361ee, #7209b7);
-    --gradiente-exito: linear-gradient(135deg, #4cc9f0, #4ea8de);
-    --gradiente-advertencia: linear-gradient(135deg, #f72585, #b5179e);
+    /* Gradientes modernos y suaves */
+    --gradiente-primario: linear-gradient(135deg, #3274d9, #3498db);
+    --gradiente-exito: linear-gradient(135deg, #2ecc71, #27ae60);
+    --gradiente-advertencia: linear-gradient(135deg, #f39c12, #f1c40f);
     
-    /* Sombras - usando colores azules en vez de negro para sombras más suaves */
-    --sombra-pequena: 0 2px 4px rgba(67, 97, 238, 0.07);
-    --sombra-mediana: 0 4px 8px rgba(58, 134, 255, 0.09);
-    --sombra-grande: 0 10px 30px rgba(74, 85, 104, 0.08);
-    --sombra-flotante: 0 5px 15px rgba(67, 97, 238, 0.3);
+    /* Sombras profesionales para efectos 3D */
+    --sombra-pequena: 0 2px 5px rgba(0, 0, 0, 0.08);
+    --sombra-mediana: 0 4px 10px rgba(0, 0, 0, 0.1);
+    --sombra-grande: 0 10px 25px rgba(0, 0, 0, 0.12);
+    --sombra-flotante: 0 10px 25px rgba(50, 116, 217, 0.25);
+    --sombra-tarjeta-3d: 0 10px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
     
     /* Espaciado */
     --espacio-xs: 0.25rem;
@@ -144,20 +145,32 @@ a:hover {
 
 /* ===== COMPONENTES PRINCIPALES ===== */
 
-/* Tarjetas de Quiz */
+/* Tarjetas de Quiz - Diseño 3D profesional y moderno */
 .quiz-card {
     background: var(--color-blanco);
     border-radius: var(--radio-extra-grande);
-    box-shadow: var(--sombra-grande);
+    box-shadow: var(--sombra-tarjeta-3d);
     overflow: hidden;
-    transition: transform var(--transicion-normal), 
-                box-shadow var(--transicion-normal);
+    transition: all var(--transicion-normal);
     border: none;
+    transform: perspective(1000px) rotateY(0deg);
+    position: relative;
 }
 
 .quiz-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    transform: perspective(1000px) rotateY(2deg) translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2), 0 15px 20px rgba(0,0,0,0.1);
+}
+
+.quiz-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradiente-primario);
+    z-index: 2;
 }
 
 .quiz-header {
@@ -166,6 +179,15 @@ a:hover {
     padding: var(--espacio-xl);
     text-align: center;
     position: relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.quiz-header h2 {
+    color: var(--color-blanco);
+    font-weight: var(--peso-extra-negrita);
+    font-size: 2rem;
+    margin-bottom: var(--espacio-md);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .quiz-header::before {
@@ -183,54 +205,80 @@ a:hover {
     padding: var(--espacio-xl);
 }
 
-/* Botones */
+/* Botones - Diseño moderno y profesional con efecto 3D */
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: var(--espacio-md) var(--espacio-lg);
+    padding: var(--espacio-md) var(--espacio-xl);
     border: none;
     border-radius: var(--radio-grande);
     font-family: var(--fuente-principal);
     font-size: 1rem;
-    font-weight: var(--peso-medio);
+    font-weight: var(--peso-negrita);
     text-decoration: none;
-    transition: all var(--transicion-normal);
+    transition: all 0.35s cubic-bezier(.215,.61,.355,1);
     cursor: pointer;
-    min-height: 44px; /* Accesibilidad táctil */
+    min-height: 48px; /* Accesibilidad táctil mejorada */
     position: relative;
     overflow: hidden;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
+    z-index: 1;
 }
 
 .btn::before {
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
+    left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left var(--transicion-lenta);
+    background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.2), rgba(255,255,255,0));
+    transform: translateX(-100%);
+    transition: transform 1s cubic-bezier(.215,.61,.355,1);
+    z-index: -1;
 }
 
 .btn:hover::before {
-    left: 100%;
+    transform: translateX(100%);
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(255,255,255,0.3);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.5s cubic-bezier(.215,.61,.355,1);
+    z-index: -1;
+}
+
+.btn:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
 }
 
 .btn-quiz {
     background: var(--gradiente-primario);
     color: var(--color-blanco);
-    box-shadow: var(--sombra-mediana);
+    box-shadow: 0 4px 12px rgba(50, 116, 217, 0.3), 0 1px 3px rgba(0,0,0,.08);
 }
 
 .btn-quiz:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--sombra-flotante);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 7px 14px rgba(50, 116, 217, 0.4), 0 3px 6px rgba(0,0,0,.1);
     color: var(--color-blanco);
 }
 
 .btn-quiz:active {
-    transform: translateY(0);
+    transform: translateY(1px);
+    box-shadow: 0 3px 8px rgba(50, 116, 217, 0.3);
 }
 
 .btn-success {
@@ -259,41 +307,90 @@ a:hover {
     transform: none !important;
 }
 
-/* Formularios */
+/* Formularios - Diseño moderno y profesional */
 .form-control {
     width: 100%;
-    padding: var(--espacio-md);
+    padding: var(--espacio-md) var(--espacio-lg);
     border: 2px solid var(--color-claro);
     border-radius: var(--radio-mediano);
     font-family: var(--fuente-principal);
     font-size: 1rem;
-    transition: border-color var(--transicion-normal),
-                box-shadow var(--transicion-normal);
+    transition: all var(--transicion-normal);
     background-color: var(--color-blanco);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05) inset;
+    position: relative;
 }
 
 .form-control:focus {
     outline: none;
     border-color: var(--color-primario);
-    box-shadow: 0 0 0 0.2rem rgba(108, 92, 231, 0.25);
+    box-shadow: 0 0 0 3px rgba(50, 116, 217, 0.15);
+    transform: translateY(-1px);
 }
 
 .form-control.form-control-lg {
-    padding: var(--espacio-lg);
+    padding: var(--espacio-lg) var(--espacio-xl);
     font-size: 1.1rem;
+    border-width: 3px;
+    border-radius: var(--radio-grande);
 }
 
 .form-label {
     display: block;
     margin-bottom: var(--espacio-sm);
-    font-weight: var(--peso-medio);
+    font-weight: var(--peso-negrita);
     color: var(--color-oscuro);
+    font-size: 1rem;
+    position: relative;
+    transition: all var(--transicion-normal);
 }
 
 .form-text {
     font-size: 0.875rem;
-    color: #6c757d;
+    color: var(--color-texto-secundario);
     margin-top: var(--espacio-xs);
+    transition: all var(--transicion-normal);
+}
+
+/* Mejoras en validación de formularios */
+.form-control.is-valid {
+    border-color: var(--color-exito);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2327ae60' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    padding-right: 2.5rem !important;
+}
+
+.form-control.is-invalid {
+    border-color: var(--color-peligro);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23e74c3c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    padding-right: 2.5rem !important;
+}
+
+.valid-feedback, .invalid-feedback {
+    display: none;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    border-radius: var(--radio-pequeno);
+    padding: 0.25rem 0.5rem;
+    animation: fadeIn 0.3s ease;
+    font-weight: 500;
+}
+
+.invalid-feedback {
+    color: var(--color-blanco);
+    background-color: var(--color-peligro);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.valid-feedback {
+    color: var(--color-blanco);
+    background-color: var(--color-exito);
 }
 
 /* Indicadores de estado */
@@ -336,13 +433,82 @@ a:hover {
     text-align: center;
 }
 
-/* Estadísticas del quiz */
+/* Estadísticas del quiz - Diseño mejorado con tarjetas 3D */
 .quiz-stats {
-    background: var(--color-fondo);
+    background: var(--color-blanco);
     border-radius: var(--radio-mediano);
     padding: var(--espacio-lg);
     margin: var(--espacio-md) 0;
-    border: 1px solid #e9ecef;
+    box-shadow: var(--sombra-tarjeta-3d);
+    transform: perspective(1000px) rotateX(0deg);
+    transition: all 0.5s ease;
+}
+
+.quiz-stats:hover {
+    transform: perspective(1000px) rotateX(2deg);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15), 0 8px 15px rgba(0, 0, 0, 0.08);
+}
+
+.stat-item {
+    padding: var(--espacio-md);
+    border-radius: var(--radio-mediano);
+    text-align: center;
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
+    transition: all 0.3s ease;
+    margin-bottom: var(--espacio-md);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 8px 8px 15px #d9d9d9, -8px -8px 15px #ffffff;
+}
+
+.stat-item i {
+    font-size: 2rem;
+    margin-bottom: var(--espacio-sm);
+    background: var(--gradiente-primario);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: block;
+}
+
+.stat-label {
+    font-weight: var(--peso-negrita);
+    color: var(--color-texto-secundario);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--espacio-xs);
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: var(--peso-extra-negrita);
+    color: var(--color-texto);
+}
+
+/* Estilos específicos para cada tipo de estadística */
+.stat-item.stat-status i {
+    background: var(--gradiente-advertencia);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.stat-item.stat-participants i {
+    background: var(--gradiente-exito);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.stat-item.stat-connection i {
+    background: var(--gradiente-primario);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 /* Temporizador circular */
@@ -499,13 +665,13 @@ a:hover {
 }
 
 .alert-success {
-    color: #155724;
+    color: #26890c;  /* Verde Kahoot más claro */
     background-color: #d4edda;
     border-color: #c3e6cb;
 }
 
 .alert-info {
-    color: #0c5460;
+    color: #00a9e0;  /* Azul Kahoot más claro */
     background-color: #d1ecf1;
     border-color: #bee5eb;
 }

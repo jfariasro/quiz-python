@@ -121,39 +121,80 @@ class QuizSession:
         Returns:
             True si se agregó correctamente, False en caso contrario
         """
-        # Verificar límites
-        if len(self.participants) >= self.max_participants:
-            logger.warning(f"Sesión llena: {len(self.participants)} participantes")
-            return False
-        
-        # Verificar si ya está registrado
-        if participant_id in self.participants:
-            logger.warning(f"Participante ya registrado: {participant_id}")
-            return False
-        
-        # Verificar si se permite unirse tarde
-        if self.state not in [QuizState.WAITING, QuizState.STARTING]:
-            if not self.settings['allow_late_join']:
-                logger.warning(f"No se permite unirse tarde: {participant_id}")
+        try:
+            # Asegurar que participant_id es una cadena válida
+            if not participant_id or not isinstance(participant_id, str):
+                logger.warning(f"ID de participante inválido: {participant_id}")
                 return False
+                
+            # Asegurar que el nombre es una cadena válida
+            if not name or not isinstance(name, str):
+                name = f"Jugador {len(self.participants) + 1}"
+                logger.warning(f"Nombre de participante inválido, usando valor por defecto: {name}")
+            
+            # Verificar límites
+            if len(self.participants) >= self.max_participants:
+                logger.warning(f"Sesión llena: {len(self.participants)} participantes")
+                return False
+            
+            # Verificar si ya está registrado
+            if participant_id in self.participants:
+                logger.warning(f"Participante ya registrado: {participant_id}")
+                return False
+            
+            # Verificar si se permite unirse tarde
+            if self.state not in [QuizState.WAITING, QuizState.STARTING]:
+                try:
+                    if not self.settings.get('allow_late_join', True):
+                        logger.warning(f"No se permite unirse tarde: {participant_id}")
+                        return False
+                except Exception as e:
+                    logger.error(f"Error al verificar allow_late_join: {e}")
+                    # Por defecto, permitir unirse tarde en caso de error
+        except Exception as e:
+            logger.error(f"Error inesperado en verificación de add_participant: {e}")
+            return False
         
-        # Crear datos del participante
-        participant_data = {
-            'id': participant_id,
-            'name': name,
-            'status': ParticipantStatus.CONNECTED,
-            'score': 0,
-            'answers': [],  # Historial de respuestas
-            'join_time': time.time(),
-            'last_seen': time.time(),
-            **kwargs
-        }
-        
-        self.participants[participant_id] = participant_data
-        self.stats['participants_joined'] += 1
-        
-        logger.info(f"Participante agregado: {name} ({participant_id})")
-        self._emit_event('participant_join', participant_data)
+        try:
+            # Crear datos del participante
+            participant_data = {
+                'id': participant_id,
+                'name': name,
+                'status': ParticipantStatus.CONNECTED,
+                'score': 0,
+                'answers': [],  # Historial de respuestas
+                'join_time': time.time(),
+                'last_seen': time.time()
+            }
+            
+            # Agregar datos adicionales si los hay, pero con validación
+            for key, value in kwargs.items():
+                if key and isinstance(key, str):
+                    participant_data[key] = value
+            
+            # Guardar participante en la sesión
+            self.participants[participant_id] = participant_data
+            
+            # Actualizar estadísticas
+            if 'participants_joined' in self.stats:
+                self.stats['participants_joined'] += 1
+            else:
+                self.stats['participants_joined'] = 1
+            
+            logger.info(f"Participante agregado: {name} ({participant_id})")
+            
+            # Emitir evento
+            try:
+                self._emit_event('participant_join', participant_data)
+            except Exception as e:
+                logger.error(f"Error al emitir evento participant_join: {e}")
+                # No fallar solo por error en emisión de evento
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error al agregar participante: {e}", exc_info=True)
+            return False
         
         return True
     

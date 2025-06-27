@@ -17,16 +17,16 @@
     <link href="{{ url_for('static', filename='css/info-panels.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/effects.css') }}" rel="stylesheet">
     
-    <!-- Estilos adicionales -->
+    <!-- Estilos adicionales - Colores Kahoot -->
     <style>
         :root {
-            --primary-color: #6c5ce7;
-            --secondary-color: #a29bfe;
-            --success-color: #00b894;
-            --warning-color: #fdcb6e;
-            --danger-color: #e17055;
-            --dark-color: #2d3436;
-            --light-color: #ddd;
+            --primary-color: #46178f;     /* Morado Kahoot */
+            --secondary-color: #26890c;   /* Verde Kahoot */
+            --success-color: #00c985;     /* Verde brillante */
+            --warning-color: #ff9f00;     /* Naranja Kahoot */
+            --danger-color: #ff3355;      /* Rojo Kahoot */
+            --dark-color: #9e9e9e;        /* Gris claro en vez de negro */
+            --light-color: #f5f6fa;       /* Color muy claro */
         }
 
         body {
@@ -139,7 +139,7 @@
             border-radius: 15px;
             padding: 2rem;
             margin: 1rem 0;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(171, 163, 204, 0.1);
         }
 
         .option-button {
@@ -265,15 +265,44 @@
         let socket = null;
         
         function initSocket() {
-            socket = io();
+            // Configurar socket con reconexión automática
+            socket = io({
+                reconnection: true,
+                reconnectionAttempts: 10,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax: 5000,
+                timeout: 20000
+            });
             
             socket.on('connect', function() {
                 console.log('Conectado al servidor');
+                const connectionStatus = document.getElementById('connection-status');
+                if (connectionStatus) {
+                    connectionStatus.innerHTML = '<span class="text-success">Conectado</span>';
+                }
             });
             
             socket.on('disconnect', function() {
                 console.log('Desconectado del servidor');
                 showAlert('Conexión perdida. Intentando reconectar...', 'warning');
+                
+                const connectionStatus = document.getElementById('connection-status');
+                if (connectionStatus) {
+                    connectionStatus.innerHTML = '<span class="text-danger">Desconectado</span>';
+                }
+            });
+            
+            socket.on('reconnecting', function(attemptNumber) {
+                console.log(`Intentando reconectar (intento ${attemptNumber})...`);
+            });
+            
+            socket.on('reconnect', function(attemptNumber) {
+                console.log(`Reconectado después de ${attemptNumber} intentos`);
+                showAlert('Conexión restablecida', 'success');
+            });
+            
+            socket.on('reconnect_error', function(error) {
+                console.error('Error de reconexión:', error);
             });
             
             socket.on('error', function(data) {

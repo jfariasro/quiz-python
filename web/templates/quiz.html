@@ -207,10 +207,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar Socket.IO
     const socket = initSocket();
     
-    // Unirse a la sesión
+    // Unirse a la sesión con información completa
     socket.emit('join_session', {
         session_id: '{{ session_id }}',
-        participant_id: '{{ participant_id }}'
+        participant_id: '{{ participant_id }}',
+        name: '{{ participant_name }}'
+    });
+    
+    console.log('Conectando a sesión:', {
+        sessionId: '{{ session_id }}',
+        participantId: '{{ participant_id }}',
+        name: '{{ participant_name }}'
     });
     
     // Event listeners del servidor
@@ -219,8 +226,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     socket.on('question_started', function(data) {
-        showQuestion(data);
-        startQuestionTimer(data.time_limit);
+        console.log('Pregunta recibida:', data);
+        questionReceived = true;
+        
+        try {
+            if (data && data.question) {
+                showQuestion(data);
+                startQuestionTimer(data.time_limit || 30);
+                
+                // Actualizar la barra de progreso
+                updateQuizProgress(data.question_index + 1, totalQuestionsCount);
+            } else {
+                console.error('Datos de pregunta inválidos:', data);
+                showAlert('Error al cargar la pregunta. Intenta refrescar la página.', 'warning');
+            }
+        } catch (error) {
+            console.error('Error procesando la pregunta:', error);
+            showAlert('Error al mostrar la pregunta: ' + error.message, 'danger');
+        }
     });
     
     socket.on('question_results', function(data) {
@@ -236,8 +259,107 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     socket.on('state_change', function(data) {
-        console.log('Estado cambiado:', data.new_state);
+        console.log('Estado cambiado:', data);
+        
+        // Manejar los diferentes estados del quiz
+        if (data.state === 'question' || data.new_state === 'question') {
+            console.log('Cambiando a estado de pregunta');
+            
+            // Si ya estamos en una pregunta, no hacemos nada
+            if (!questionState.classList.contains('d-none')) {
+                return;
+            }
+            
+            // Si no tenemos una pregunta cargada, solicitar la pregunta actual
+            if (!questionReceived) {
+                socket.emit('get_current_question', { 
+                    session_id: '{{ session_id }}',
+                    participant_id: '{{ participant_id }}'
+                });
+            }
+        }
+        else if (data.state === 'collecting' || data.new_state === 'collecting') {
+            // Mantener la interfaz de pregunta activa
+            showState(questionState);
+        }
+        else if (data.state === 'finished' || data.new_state === 'finished') {
+            showAlert('¡El quiz ha finalizado!', 'info');
+        }
     });
+    
+    // Mejorar manejo de eventos de conexión
+    socket.on('connect_error', function(error) {
+        console.error('Error de conexión:', error);
+        showAlert('Error de conexión con el servidor. Intentando reconectar...', 'danger');
+    });
+    
+    socket.on('connect', function() {
+        console.log('Conectado al servidor. Volviendo a unirse a la sesión...');
+        // Re-unirse a la sesión si se reconecta
+        socket.emit('join_session', {
+            session_id: '{{ session_id }}',
+            participant_id: '{{ participant_id }}',
+            name: '{{ participant_name }}'
+        });
+    });
+    
+    // Manejar errores en general
+    window.addEventListener('error', function(event) {
+        console.error('Error en la página:', event.error);
+        
+        // Si hay un error relacionado con socket y el socket no está conectado, intentar reconectar
+        if (event.error && event.error.message && event.error.message.includes('socket') && socket && !socket.connected) {
+            showAlert('Error de comunicación. Intentando reconectar...', 'warning');
+            
+            // Forzar reconexión
+            socket.connect();
+        }
+    });
+    
+    // Función para reintentar cargar una página si falla
+    function reloadPageWithRetry(maxRetries = 3, delay = 2000) {
+        let retries = 0;
+        
+        function attemptReload() {
+            retries++;
+            console.log(`Intento de recarga ${retries}/${maxRetries}`);
+            
+            if (retries <= maxRetries) {
+                location.reload();
+            } else {
+                showAlert('No se pudo cargar la página correctamente. Volviendo al inicio...', 'danger');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 3000);
+            }
+        }
+        
+        // Si la página no carga correctamente después de 'delay' ms, intentamos recargar
+        if (document.readyState !== 'complete') {
+            setTimeout(attemptReload, delay);
+        }
+    }
+    
+    // Variable para el número total de preguntas
+    let totalQuestionsCount = parseInt(totalQuestions.textContent) || 10;
+    
+    // Registrar si se recibió alguna pregunta
+    let questionReceived = false;
+    
+    // Verificar si se recibió alguna pregunta después de un tiempo
+    setTimeout(function() {
+        if (!questionReceived && waitingState && !waitingState.classList.contains('d-none')) {
+            console.log('No se ha recibido ninguna pregunta todavía. Intentando recuperar estado...');
+            
+            // Intentar recuperar la pregunta actual
+            socket.emit('get_current_question', { 
+                session_id: '{{ session_id }}',
+                participant_id: '{{ participant_id }}'
+            });
+            
+            showAlert('Esperando que comience el quiz...', 'info');
+        }
+    }, 5000);
     
     // Funciones principales
     function showState(state) {

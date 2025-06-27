@@ -436,8 +436,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (data.state === 'starting') {
             showStartingCountdown();
         } else if (data.state === 'question') {
-            // Redirigir a la interfaz del quiz
-            window.location.href = `/quiz/{{ participant_id }}`;
+            // Preparar navegación segura al quiz
+            prepareQuizRedirection();
         }
     });
     
@@ -507,6 +507,35 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         
         countdownSection.classList.remove('d-none');
+    }
+    
+    // Función para navegar de forma segura al quiz
+    function prepareQuizRedirection() {
+        try {
+            console.log("Preparando redirección al quiz...");
+            
+            // Almacenar ID de participante en localStorage como respaldo
+            localStorage.setItem('lastParticipantId', "{{ participant_id }}");
+            
+            // Mostrar mensaje al usuario
+            showAlert("¡El quiz está comenzando! Redirigiendo...", "success");
+            
+            // Primera redirección con pequeño retraso para que la conexión se estabilice
+            setTimeout(() => {
+                try {
+                    console.log("Redirigiendo al quiz...");
+                    window.location.href = `/quiz/{{ participant_id }}`;
+                } catch (error) {
+                    console.error("Error en redirección:", error);
+                    // Redirección directa como fallback
+                    window.location.href = `/quiz/{{ participant_id }}`;
+                }
+            }, 1000);
+        } catch (error) {
+            console.error("Error preparando redirección:", error);
+            // Redirección directa como fallback
+            window.location.href = `/quiz/{{ participant_id }}`;
+        }
     }
     
     // Obtener información inicial

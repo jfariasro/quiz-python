@@ -7,6 +7,7 @@
 <style>
     body {
         background: var(--gradiente-primario);
+        color: var(--color-blanco);  /* Asegurar texto claro sobre gradiente */
     }
     
     .hero-section {
@@ -57,12 +58,14 @@
         box-shadow: var(--sombra-mediana);
         border-radius: var(--radio-grande);
         overflow: hidden;
+        background-color: var(--color-blanco);
     }
     
     .quiz-header {
         background: white;
         border-bottom: 1px solid rgba(58, 134, 255, 0.1);
         padding: 25px 20px;
+        color: var(--color-texto);  /* Asegurar texto oscuro sobre fondo claro */
     }
     
     .form-control {
@@ -195,10 +198,10 @@
                             </div>
                             
                             <div class="quiz-stats mb-4">
-                                <div class="row text-center">
-                                    <div class="col-4">
-                                        <div class="stat-item">
-                                            <i class="fas fa-clock text-primary"></i>
+                                <div class="row g-3 text-center">
+                                    <div class="col-md-4">
+                                        <div class="stat-item stat-status">
+                                            <i class="fas fa-clock"></i>
                                             <div class="stat-label">Estado</div>
                                             <div class="stat-value">
                                                 <span class="status-indicator status-waiting"></span>
@@ -206,18 +209,18 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-4">
-                                        <div class="stat-item">
-                                            <i class="fas fa-users text-success"></i>
+                                    <div class="col-md-4">
+                                        <div class="stat-item stat-participants">
+                                            <i class="fas fa-users"></i>
                                             <div class="stat-label">Participantes</div>
                                             <div class="stat-value">
                                                 <span class="participants-count" id="participants-count">0</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-4">
-                                        <div class="stat-item">
-                                            <i class="fas fa-wifi text-info"></i>
+                                    <div class="col-md-4">
+                                        <div class="stat-item stat-connection">
+                                            <i class="fas fa-wifi"></i>
                                             <div class="stat-label">Conexión</div>
                                             <div class="stat-value">
                                                 <span id="connection-status">Verificando...</span>
@@ -400,7 +403,8 @@
                     },
                     body: JSON.stringify({ 
                         session_id: sessionId,
-                        participant_name: participantName 
+                        name: participantName,
+                        participantName: participantName 
                     })
                 })
                 .then(response => response.json())
