@@ -1,0 +1,136 @@
+{
+    "id": "quiz-comida-mundial-001",
+    "title": "🍕 Comida del Mundo",
+    "description": "¡Un delicioso viaje gastronómico! Descubre platos típicos, ingredientes y curiosidades culinarias.",
+    "category": "gastronomia",
+    "difficulty": "facil",
+    "estimated_duration": 240,
+    "question_time_limit": 20,
+    "points_for_correct": 80,
+    "speed_bonus_enabled": true,
+    "max_speed_bonus": 40,
+    "created_at": "2025-06-26T13:45:00",
+    "updated_at": "2025-06-26T13:45:00",
+    "questions": [
+        {
+            "id": "q1",
+            "question": "🍝 ¿De qué país es originaria la pasta?",
+            "type": "multiple_choice",
+            "options": ["Francia", "España", "Italia", "Grecia"],
+            "correct_answer": 2,
+            "explanation": "Aunque Marco Polo trajo fideos de China, la pasta moderna es italiana.",
+            "points": 80,
+            "time_limit": 20
+        },
+        {
+            "id": "q2",
+            "question": "🌮 ¿Cuál es el ingrediente principal de las tortillas mexicanas?",
+            "type": "multiple_choice",
+            "options": ["Trigo", "Maíz", "Arroz", "Avena"],
+            "correct_answer": 1,
+            "explanation": "Las tortillas tradicionales mexicanas se hacen con maíz.",
+            "points": 80,
+            "time_limit": 20
+        },
+        {
+            "id": "q3",
+            "question": "🍣 ¿Qué significa 'sushi' en japonés?",
+            "type": "multiple_choice",
+            "options": ["Pescado crudo", "Arroz avinagrado", "Comida del mar", "Rollo de alga"],
+            "correct_answer": 1,
+            "explanation": "Sushi significa 'arroz avinagrado', no necesariamente lleva pescado crudo.",
+            "points": 80,
+            "time_limit": 20
+        },
+        {
+            "id": "q4",
+            "question": "🧀 ¿De qué animal proviene el queso roquefort?",
+            "type": "multiple_choice",
+            "options": ["Vaca", "Cabra", "Oveja", "Búfala"],
+            "correct_answer": 2,
+            "explanation": "El auténtico roquefort se hace exclusivamente con leche de oveja.",
+            "points": 80,
+            "time_limit": 20
+        },
+        {
+            "id": "q5",
+            "question": "🌶️ ¿Cuál es la escala para medir el picante de los chiles?",
+            "type": "multiple_choice",
+            "options": ["Escala Richter", "Escala Scoville", "Escala Celsius", "Escala Mohs"],
+            "correct_answer": 1,
+            "explanation": "La escala Scoville mide las unidades de picante en los chiles.",
+            "points": 80,
+            "time_limit": 20
+        },
+        {
+            "id": "q6",
+            "question": "🥖 ¿Qué país es famoso por el croissant?",
+            "type": "multiple_choice",
+            "options": ["Italia", "Francia", "Austria", "Alemania"],
+            "correct_answer": 1,
+            "explanation": "Aunque se originó en Austria, el croissant es icónico de Francia.",
+            "points": 80,
+            "time_limit": 20
+        },
+        {
+            "id": "q7",
+            "question": "🍫 ¿Cuál es el principal ingrediente del chocolate?",
+            "type": "multiple_choice",
+            "options": ["Café", "Cacao", "Azúcar", "Vainilla"],
+            "correct_answer": 1,
+            "explanation": "El cacao es el ingrediente principal del chocolate.",
+            "points": 80,
+            "time_limit": 20
+        },
+        {
+            "id": "q8",
+            "question": "🍛 ¿Cuál es el plato nacional de España?",
+            "type": "multiple_choice",
+            "options": ["Gazpacho", "Tortilla", "Paella", "Jamón ibérico"],
+            "correct_answer": 2,
+            "explanation": "La paella valenciana es considerada el plato nacional de España.",
+            "points": 80,
+            "time_limit": 20
+        },
+        {
+            "id": "q9",
+            "question": "🥘 ¿Qué es el 'umami'?",
+            "type": "multiple_choice",
+            "options": ["Un condimento", "El quinto sabor", "Una técnica de cocina", "Un utensilio"],
+            "correct_answer": 1,
+            "explanation": "Umami es el quinto sabor básico, además de dulce, salado, ácido y amargo.",
+            "points": 80,
+            "time_limit": 20
+        },
+        {
+            "id": "q10",
+            "question": "🍕 ¿Cuántos tipos de queso lleva una pizza 'Quattro Formaggi'?",
+            "type": "multiple_choice",
+            "options": ["2", "3", "4", "5"],
+            "correct_answer": 2,
+            "explanation": "'Quattro Formaggi' significa 'cuatro quesos' en italiano.",
+            "points": 80,
+            "time_limit": 20
+        },
+        {
+            "id": "q11",
+            "question": "🍷 ¿En qué país se originó el champagne?",
+            "type": "multiple_choice",
+            "options": ["Italia", "España", "Francia", "Alemania"],
+            "correct_answer": 2,
+            "explanation": "El champagne se originó en la región de Champagne, Francia.",
+            "points": 80,
+            "time_limit": 20
+        },
+        {
+            "id": "q12",
+            "question": "🥥 ¿Cuál es la fruta más grande del mundo?",
+            "type": "multiple_choice",
+            "options": ["Sandía", "Melón", "Yaca", "Durian"],
+            "correct_answer": 2,
+            "explanation": "La yaca puede pesar hasta 40 kg y es la fruta más grande del mundo.",
+            "points": 80,
+            "time_limit": 20
+        }
+    ]
+}

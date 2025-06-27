@@ -1,0 +1,692 @@
+/* 
+ * Estilos personalizados para la Plataforma de Quizzes
+ * Archivo principal de CSS con tema moderno y responsivo
+ */
+
+/* ===== VARIABLES CSS ===== */
+:root {
+    /* Colores principales */
+    --color-primario: #6c5ce7;
+    --color-secundario: #a29bfe;
+    --color-exito: #00b894;
+    --color-advertencia: #fdcb6e;
+    --color-peligro: #e17055;
+    --color-info: #74b9ff;
+    --color-oscuro: #2d3436;
+    --color-claro: #ddd;
+    --color-blanco: #ffffff;
+    --color-fondo: #f8f9fa;
+    
+    /* Gradientes */
+    --gradiente-primario: linear-gradient(135deg, var(--color-primario), var(--color-secundario));
+    --gradiente-exito: linear-gradient(135deg, var(--color-exito), #55a3ff);
+    --gradiente-advertencia: linear-gradient(135deg, var(--color-advertencia), #ff7675);
+    
+    /* Sombras */
+    --sombra-pequena: 0 2px 4px rgba(0,0,0,0.1);
+    --sombra-mediana: 0 4px 6px rgba(0,0,0,0.1);
+    --sombra-grande: 0 10px 30px rgba(0,0,0,0.1);
+    --sombra-flotante: 0 5px 15px rgba(108, 92, 231, 0.4);
+    
+    /* Espaciado */
+    --espacio-xs: 0.25rem;
+    --espacio-sm: 0.5rem;
+    --espacio-md: 1rem;
+    --espacio-lg: 1.5rem;
+    --espacio-xl: 2rem;
+    --espacio-xxl: 3rem;
+    
+    /* Tipografía */
+    --fuente-principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --fuente-titulo: 'Segoe UI', system-ui, sans-serif;
+    --peso-normal: 400;
+    --peso-medio: 500;
+    --peso-negrita: 600;
+    --peso-extra-negrita: 700;
+    
+    /* Bordes y radios */
+    --radio-pequeno: 8px;
+    --radio-mediano: 12px;
+    --radio-grande: 16px;
+    --radio-extra-grande: 20px;
+    --radio-circular: 50%;
+    
+    /* Transiciones */
+    --transicion-rapida: 0.2s ease;
+    --transicion-normal: 0.3s ease;
+    --transicion-lenta: 0.5s ease;
+}
+
+/* ===== RESET Y BASE ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--fuente-principal);
+    line-height: 1.6;
+    color: var(--color-oscuro);
+    background: var(--gradiente-primario);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ===== UTILIDADES GENERALES ===== */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-flex { display: flex !important; }
+.d-inline-flex { display: inline-flex !important; }
+
+.flex-column { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.justify-content-center { justify-content: center; }
+.justify-content-between { justify-content: space-between; }
+.align-items-center { align-items: center; }
+.flex-grow-1 { flex-grow: 1; }
+
+.w-100 { width: 100%; }
+.h-100 { height: 100%; }
+
+/* Márgenes y padding */
+.m-0 { margin: 0; }
+.m-1 { margin: var(--espacio-xs); }
+.m-2 { margin: var(--espacio-sm); }
+.m-3 { margin: var(--espacio-md); }
+.m-4 { margin: var(--espacio-lg); }
+.m-5 { margin: var(--espacio-xl); }
+
+.p-0 { padding: 0; }
+.p-1 { padding: var(--espacio-xs); }
+.p-2 { padding: var(--espacio-sm); }
+.p-3 { padding: var(--espacio-md); }
+.p-4 { padding: var(--espacio-lg); }
+.p-5 { padding: var(--espacio-xl); }
+
+/* ===== COMPONENTES PRINCIPALES ===== */
+
+/* Tarjetas de Quiz */
+.quiz-card {
+    background: var(--color-blanco);
+    border-radius: var(--radio-extra-grande);
+    box-shadow: var(--sombra-grande);
+    overflow: hidden;
+    transition: transform var(--transicion-normal), 
+                box-shadow var(--transicion-normal);
+    border: none;
+}
+
+.quiz-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.quiz-header {
+    background: var(--gradiente-primario);
+    color: var(--color-blanco);
+    padding: var(--espacio-xl);
+    text-align: center;
+    position: relative;
+}
+
+.quiz-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="10" cy="10" r="1" fill="white" opacity="0.1"/><circle cx="30" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="15" r="1" fill="white" opacity="0.1"/><circle cx="70" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="90" cy="10" r="1" fill="white" opacity="0.1"/></svg>');
+    pointer-events: none;
+}
+
+.quiz-body {
+    padding: var(--espacio-xl);
+}
+
+/* Botones */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--espacio-md) var(--espacio-lg);
+    border: none;
+    border-radius: var(--radio-grande);
+    font-family: var(--fuente-principal);
+    font-size: 1rem;
+    font-weight: var(--peso-medio);
+    text-decoration: none;
+    transition: all var(--transicion-normal);
+    cursor: pointer;
+    min-height: 44px; /* Accesibilidad táctil */
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left var(--transicion-lenta);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-quiz {
+    background: var(--gradiente-primario);
+    color: var(--color-blanco);
+    box-shadow: var(--sombra-mediana);
+}
+
+.btn-quiz:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-flotante);
+    color: var(--color-blanco);
+}
+
+.btn-quiz:active {
+    transform: translateY(0);
+}
+
+.btn-success {
+    background: var(--gradiente-exito);
+    color: var(--color-blanco);
+}
+
+.btn-warning {
+    background: var(--gradiente-advertencia);
+    color: var(--color-blanco);
+}
+
+.btn-danger {
+    background: var(--color-peligro);
+    color: var(--color-blanco);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: var(--color-blanco);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Formularios */
+.form-control {
+    width: 100%;
+    padding: var(--espacio-md);
+    border: 2px solid var(--color-claro);
+    border-radius: var(--radio-mediano);
+    font-family: var(--fuente-principal);
+    font-size: 1rem;
+    transition: border-color var(--transicion-normal),
+                box-shadow var(--transicion-normal);
+    background-color: var(--color-blanco);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 0.2rem rgba(108, 92, 231, 0.25);
+}
+
+.form-control.form-control-lg {
+    padding: var(--espacio-lg);
+    font-size: 1.1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--espacio-sm);
+    font-weight: var(--peso-medio);
+    color: var(--color-oscuro);
+}
+
+.form-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: var(--espacio-xs);
+}
+
+/* Indicadores de estado */
+.status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: var(--radio-circular);
+    margin-right: var(--espacio-sm);
+    animation: pulso 2s infinite;
+}
+
+@keyframes pulso {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.status-waiting {
+    background-color: var(--color-advertencia);
+}
+
+.status-active {
+    background-color: var(--color-exito);
+}
+
+.status-finished {
+    background-color: var(--color-peligro);
+}
+
+/* Contador de participantes */
+.participant-count {
+    background: var(--color-exito);
+    color: var(--color-blanco);
+    border-radius: var(--radio-extra-grande);
+    padding: var(--espacio-xs) var(--espacio-md);
+    font-size: 0.9rem;
+    font-weight: var(--peso-negrita);
+    display: inline-block;
+    min-width: 30px;
+    text-align: center;
+}
+
+/* Estadísticas del quiz */
+.quiz-stats {
+    background: var(--color-fondo);
+    border-radius: var(--radio-mediano);
+    padding: var(--espacio-lg);
+    margin: var(--espacio-md) 0;
+    border: 1px solid #e9ecef;
+}
+
+/* Temporizador circular */
+.timer-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radio-circular);
+    background: var(--gradiente-primario);
+    color: var(--color-blanco);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: var(--peso-extra-negrita);
+    margin: 0 auto;
+    box-shadow: var(--sombra-mediana);
+    position: relative;
+    overflow: hidden;
+}
+
+.timer-circle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 90%;
+    height: 90%;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: var(--radio-circular);
+    transform: translate(-50%, -50%);
+}
+
+/* Barra de progreso personalizada */
+.progress-custom {
+    height: 10px;
+    background: #e9ecef;
+    border-radius: var(--radio-pequeno);
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-custom {
+    background: var(--gradiente-primario);
+    height: 100%;
+    transition: width var(--transicion-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar-custom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(45deg,
+        rgba(255,255,255,0.2) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255,255,255,0.2) 50%,
+        rgba(255,255,255,0.2) 75%,
+        transparent 75%,
+        transparent);
+    background-size: 20px 20px;
+    animation: progress-stripe 1s linear infinite;
+}
+
+@keyframes progress-stripe {
+    0% { background-position: 0 0; }
+    100% { background-position: 20px 0; }
+}
+
+/* Opciones de pregunta */
+.option-button {
+    background: var(--color-blanco);
+    border: 3px solid var(--color-claro);
+    border-radius: var(--radio-grande);
+    padding: var(--espacio-lg);
+    margin: var(--espacio-sm) 0;
+    width: 100%;
+    transition: all var(--transicion-normal);
+    font-size: 1.1rem;
+    text-align: left;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.option-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(108, 92, 231, 0.1), transparent);
+    transition: left var(--transicion-normal);
+}
+
+.option-button:hover {
+    border-color: var(--color-primario);
+    background: rgba(108, 92, 231, 0.05);
+    transform: translateX(5px);
+}
+
+.option-button:hover::before {
+    left: 100%;
+}
+
+.option-button.selected {
+    background: var(--color-primario);
+    border-color: var(--color-primario);
+    color: var(--color-blanco);
+    transform: scale(1.02);
+}
+
+.option-button.correct {
+    background: var(--color-exito);
+    border-color: var(--color-exito);
+    color: var(--color-blanco);
+}
+
+.option-button.incorrect {
+    background: var(--color-peligro);
+    border-color: var(--color-peligro);
+    color: var(--color-blanco);
+}
+
+/* Spinner de carga */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: var(--radio-circular);
+    border-top-color: var(--color-blanco);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Alertas */
+.alert {
+    padding: var(--espacio-md) var(--espacio-lg);
+    margin-bottom: var(--espacio-md);
+    border: 1px solid transparent;
+    border-radius: var(--radio-mediano);
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.alert-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+/* Navbar personalizada */
+.navbar {
+    backdrop-filter: blur(10px);
+    background: rgba(0,0,0,0.1) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.navbar-brand {
+    font-weight: var(--peso-extra-negrita);
+    font-size: 1.5rem;
+    color: var(--color-blanco) !important;
+}
+
+/* Footer */
+.footer {
+    background: var(--color-oscuro);
+    color: var(--color-blanco);
+    text-align: center;
+    padding: var(--espacio-lg);
+    margin-top: auto;
+    font-size: 0.9rem;
+}
+
+/* Leaderboard */
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--espacio-md);
+    margin-bottom: var(--espacio-sm);
+    background: var(--color-blanco);
+    border-radius: var(--radio-mediano);
+    box-shadow: var(--sombra-pequena);
+    transition: transform var(--transicion-rapida);
+}
+
+.leaderboard-item:hover {
+    transform: translateX(5px);
+}
+
+.leaderboard-item.me {
+    background: var(--gradiente-primario);
+    color: var(--color-blanco);
+    border: 2px solid var(--color-primario);
+}
+
+.medal {
+    font-size: 1.5rem;
+    margin-right: var(--espacio-md);
+}
+
+/* Animaciones de entrada */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease forwards;
+}
+
+.slide-in-right {
+    animation: slideInRight 0.6s ease forwards;
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.6s ease forwards;
+}
+
+/* ===== RESPONSIVIDAD ===== */
+
+/* Tablets */
+@media (max-width: 768px) {
+    :root {
+        --espacio-xl: 1.5rem;
+        --espacio-xxl: 2rem;
+    }
+    
+    .quiz-header {
+        padding: var(--espacio-lg);
+    }
+    
+    .quiz-body {
+        padding: var(--espacio-lg);
+    }
+    
+    .timer-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 1.2rem;
+    }
+    
+    .option-button {
+        font-size: 1rem;
+        padding: var(--espacio-md);
+    }
+}
+
+/* Móviles */
+@media (max-width: 576px) {
+    html {
+        font-size: 14px;
+    }
+    
+    .quiz-card {
+        margin: var(--espacio-sm);
+        border-radius: var(--radio-grande);
+    }
+    
+    .quiz-header {
+        padding: var(--espacio-md);
+    }
+    
+    .quiz-body {
+        padding: var(--espacio-md);
+    }
+    
+    .btn {
+        padding: var(--espacio-sm) var(--espacio-md);
+        font-size: 0.9rem;
+    }
+    
+    .form-control {
+        padding: var(--espacio-sm);
+    }
+    
+    .timer-circle {
+        width: 50px;
+        height: 50px;
+        font-size: 1rem;
+    }
+    
+    .option-button {
+        padding: var(--espacio-sm);
+        margin: var(--espacio-xs) 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+}
+
+/* Modo oscuro (para futuras implementaciones) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-oscuro: #ffffff;
+        --color-fondo: #1a1a1a;
+        --color-blanco: #2d2d2d;
+    }
+}
+
+/* Animaciones para elementos interactivos */
+.interactive-element {
+    transition: all var(--transicion-normal);
+}
+
+.interactive-element:hover {
+    transform: scale(1.05);
+}
+
+/* Efectos especiales */
+.glow-effect {
+    box-shadow: 0 0 20px rgba(108, 92, 231, 0.3);
+}
+
+.pulse-animation {
+    animation: pulso 2s infinite;
+}
+
+/* Accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus visible para navegación por teclado */
+.btn:focus-visible,
+.form-control:focus-visible,
+.option-button:focus-visible {
+    outline: 2px solid var(--color-primario);
+    outline-offset: 2px;
+}

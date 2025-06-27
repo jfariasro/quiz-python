@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}Únete al Quiz{% endblock %}
+
+{% block extra_css %}
+<!-- Estilos específicos para la página de inicio -->
+<style>
+    body {
+        background: var(--gradiente-primario);
+    }
+    
+    .hero-section {
+        text-align: center;
+        padding: 3rem 0;
+        color: white;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+        font-weight: var(--peso-extra-negrita);
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <h1 class="hero-title">
+            <i class="fas fa-brain me-3"></i>
+            Quiz Platform
+        </h1>
+        <p class="hero-subtitle">¡Pon a prueba tus conocimientos y compite con otros!</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="quiz-card">
+                <div class="quiz-header">
+                    <i class="fas fa-gamepad fa-3x mb-3"></i>
+                    <h2>{{ quiz_title or 'Quiz Disponible' }}</h2>
+                    <p class="mb-0">¡Únete y demuestra tus conocimientos!</p>
+                </div>
+                
+                <div class="quiz-body">
+                    {% if can_join %}
+                        <form id="join-form" class="validate-form" data-form-type="join-session">
+                            <div class="mb-4">
+                                <label for="session-id" class="form-label">
+                                    <i class="fas fa-key me-2"></i>
+                                    Código de Sesión
+                                </label>
+                                <input 
+                                    type="text" 
+                                    class="form-control form-control-lg text-center" 
+                                    id="session-id"
+                                    name="sessionId"
+                                    placeholder="ABC123"
+                                    value="{{ session_id or '' }}"
+                                    maxlength="6"
+                                    required
+                                >
+                                <div class="form-text">
+                                    Código de sesión: <strong>{{ session_id or 'No disponible' }}</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="participant-name" class="form-label">
+                                    <i class="fas fa-user me-2"></i>
+                                    Tu Nombre
+                                </label>
+                                <input 
+                                    type="text" 
+                                    class="form-control form-control-lg" 
+                                    id="participant-name"
+                                    name="participantName"
+                                    placeholder="Escribe tu nombre aquí..."
+                                    maxlength="20"
+                                    required
+                                >
+                                <div class="form-text">
+                                    Entre 2 y 20 caracteres
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-quiz btn-lg">
+                                    <i class="fas fa-play me-2"></i>
+                                    ¡Unirse al Quiz!
+                                </button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-warning text-center">
+                            <i class="fas fa-hourglass-half fa-2x mb-3"></i>
+                            <h4>El quiz no está disponible</h4>
+                            <p class="mb-0">El moderador aún no ha iniciado la sesión. Por favor, espera.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Información del Quiz -->
+            <div class="quiz-card mt-4">
+                <div class="quiz-body">
+                    <h5 class="mb-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Información del Quiz
+                    </h5>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="stat-box">
+                                <i class="fas fa-users stat-icon"></i>
+                                <div class="stat-number" id="participant-count">0</div>
+                                <div class="stat-label">Participantes</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-box">
+                                <i class="fas fa-clock stat-icon"></i>
+                                <div class="stat-number">~15</div>
+                                <div class="stat-label">Minutos</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-box">
+                                <i class="fas fa-trophy stat-icon"></i>
+                                <div class="stat-number">100</div>
+                                <div class="stat-label">Puntos Máx.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Instrucciones -->
+            <div class="quiz-card mt-4">
+                <div class="quiz-body">
+                    <h5 class="mb-3">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        ¿Cómo jugar?
+                    </h5>
+                    <ol class="instructions-list">
+                        <li>Ingresa el código de sesión proporcionado por el moderador</li>
+                        <li>Escribe tu nombre para identificarte</li>
+                        <li>Haz clic en "¡Unirse al Quiz!" para entrar</li>
+                        <li>Responde las preguntas lo más rápido posible</li>
+                        <li>¡Gana puntos por velocidad y precisión!</li>
+                    </ol>
+                    <p class="text-muted small">
+                        <i class="fas fa-rocket me-1"></i>
+                        Consejo: Responde rápido para obtener más puntos bonus.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/quiz-client.js') }}"></script>  
+<script src="{{ url_for('static', filename='js/form-handler.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Elementos del DOM
+    const form = document.getElementById('join-form');
+    const sessionIdInput = document.getElementById('session-id');
+    const participantNameInput = document.getElementById('participant-name');
+    const participantCount = document.getElementById('participant-count');
+    
+    // Auto-completar código de sesión si está disponible
+    if (sessionIdInput && '{{ session_id }}') {
+        sessionIdInput.value = '{{ session_id }}';
+        sessionIdInput.readOnly = true;
+    }
+    
+    // Manejar envío del formulario
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const sessionId = sessionIdInput.value.trim().toUpperCase();
+            const participantName = participantNameInput.value.trim();
+            
+            if (!sessionId || !participantName) {
+                alert('Por favor, completa todos los campos');
+                return;
+            }
+            
+            if (participantName.length < 2) {
+                alert('El nombre debe tener al menos 2 caracteres');
+                return;
+            }
+            
+            // Enviar datos al servidor
+            fetch('/join', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    participant_name: participantName
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Redirigir al lobby
+                    window.location.href = `/lobby/${data.participant_id}`;
+                } else {
+                    alert(data.message || 'Error al unirse al quiz');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error de conexión. Inténtalo de nuevo.');
+            });
+        });
+    }
+    
+    // Actualizar conteo de participantes periódicamente
+    function updateParticipantCount() {
+        fetch('/api/session/status')
+            .then(response => response.json())
+            .then(data => {
+                if (data.active_session && participantCount) {
+                    participantCount.textContent = data.active_session.participants_count || 0;
+                }
+            })
+            .catch(error => {
+                console.error('Error al obtener estado:', error);
+            });
+    }
+    
+    // Actualizar cada 5 segundos
+    updateParticipantCount();
+    setInterval(updateParticipantCount, 5000);
+    
+    // Enfocar el campo nombre si el código de sesión ya está completo
+    if (sessionIdInput && sessionIdInput.value && participantNameInput) {
+        participantNameInput.focus();
+    } else if (sessionIdInput) {
+        sessionIdInput.focus();
+    }
+});
+</script>
+{% endblock %}

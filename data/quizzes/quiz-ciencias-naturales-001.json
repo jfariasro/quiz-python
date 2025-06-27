@@ -1,0 +1,79 @@
+{
+    "id": "quiz-ciencias-naturales-001",
+    "title": "Ciencias Naturales - Biología Básica",
+    "description": "Quiz sobre conceptos fundamentales de biología y ciencias naturales.",
+    "category": "ciencias",
+    "difficulty": "principiante",
+    "estimated_duration": 240,
+    "question_time_limit": 30,
+    "points_for_correct": 100,
+    "speed_bonus_enabled": true,
+    "max_speed_bonus": 50,
+    "created_at": "2024-01-15T11:00:00",
+    "updated_at": "2024-01-15T11:00:00",
+    "questions": [
+        {
+            "id": "q1",
+            "question": "¿Cuál es la unidad básica de la vida?",
+            "type": "multiple_choice",
+            "options": ["Átomo", "Célula", "Molécula", "Órgano"],
+            "correct_answer": 1,
+            "explanation": "La célula es la unidad básica de la vida",
+            "points": 100,
+            "time_limit": 30
+        },
+        {
+            "id": "q2",
+            "question": "¿Qué proceso realizan las plantas para producir su alimento?",
+            "type": "multiple_choice",
+            "options": ["Respiración", "Digestión", "Fotosíntesis", "Fermentación"],
+            "correct_answer": 2,
+            "explanation": "La fotosíntesis es el proceso por el cual las plantas producen glucosa usando luz solar",
+            "points": 100,
+            "time_limit": 30
+        },
+        {
+            "id": "q3",
+            "question": "¿Cuántos corazones tiene un pulpo?",
+            "type": "multiple_choice",
+            "options": ["1", "2", "3", "4"],
+            "correct_answer": 2,
+            "explanation": "Los pulpos tienen tres corazones",
+            "points": 100,
+            "time_limit": 30
+        },
+        {
+            "id": "q4",
+            "question": "¿Cuál es el gas más abundante en la atmósfera terrestre?",
+            "type": "multiple_choice",
+            "options": ["Oxígeno", "Nitrógeno", "Dióxido de carbono", "Argón"],
+            "correct_answer": 1,
+            "explanation": "El nitrógeno representa aproximadamente el 78% de la atmósfera",
+            "points": 100,
+            "time_limit": 30
+        },
+        {
+            "id": "q5",
+            "question": "¿Cuál es el órgano más grande del cuerpo humano?",
+            "type": "multiple_choice",
+            "options": ["Hígado", "Pulmones", "Piel", "Cerebro"],
+            "correct_answer": 2,
+            "explanation": "La piel es el órgano más grande del cuerpo humano",
+            "points": 100,
+            "time_limit": 30
+        },
+        {
+            "id": "q6",
+            "question": "¿Qué animal es conocido por cambiar de color?",
+            "type": "multiple_choice",
+            "options": ["Iguana", "Camaleón", "Lagarto", "Salamandra"],
+            "correct_answer": 1,
+            "explanation": "Los camaleones pueden cambiar de color para camuflarse y comunicarse",
+            "points": 100,
+            "time_limit": 30
+        }
+    ],
+    "tags": ["biologia", "ciencias", "naturaleza", "animales"],
+    "author": "Sistema Quiz",
+    "version": "1.0"
+}

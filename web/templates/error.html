@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Error {{ error_code }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="quiz-card">
+            <div class="quiz-header">
+                <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                <h1 class="h3">Error {{ error_code }}</h1>
+                <p class="mb-0">{{ error_message }}</p>
+            </div>
+            
+            <div class="quiz-body text-center">
+                {% if error_code == 404 %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-search me-2"></i>
+                        La página que buscas no existe o ha sido movida.
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>¿Qué puedes hacer?</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-home text-primary me-2"></i>
+                                Volver a la página principal
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-refresh text-warning me-2"></i>
+                                Verificar la URL e intentar de nuevo
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-arrow-left text-success me-2"></i>
+                                Usar el botón atrás del navegador
+                            </li>
+                        </ul>
+                    </div>
+                {% elif error_code == 500 %}
+                    <div class="alert alert-danger">
+                        <i class="fas fa-server me-2"></i>
+                        Ha ocurrido un error interno en el servidor.
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>¿Qué puedes hacer?</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-refresh text-primary me-2"></i>
+                                Intentar recargar la página
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-clock text-warning me-2"></i>
+                                Esperar unos minutos e intentar de nuevo
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-home text-success me-2"></i>
+                                Volver a la página principal
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <div class="alert alert-secondary">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Ha ocurrido un error inesperado.
+                    </div>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-6">
+                        <button class="btn btn-secondary w-100" onclick="history.back()">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Atrás
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-quiz w-100" onclick="window.location.href='/'">
+                            <i class="fas fa-home me-2"></i>
+                            Inicio
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Información de contacto o ayuda -->
+        <div class="text-center mt-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-life-ring me-2"></i>
+                        ¿Necesitas ayuda?
+                    </h6>
+                    <p class="card-text small mb-0">
+                        Si el problema persiste, contacta al administrador del sistema.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-redirigir después de 30 segundos en errores 500
+    {% if error_code == 500 %}
+    setTimeout(() => {
+        if (confirm('¿Quieres volver a la página principal?')) {
+            window.location.href = '/';
+        }
+    }, 30000);
+    {% endif %}
+});
+</script>
+{% endblock %}

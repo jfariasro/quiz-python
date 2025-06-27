@@ -1,0 +1,116 @@
+{
+    "id": "quiz-deportes-mundial-001",
+    "title": "⚽ Deportes del Mundo",
+    "description": "¡Demuestra tus conocimientos deportivos! Fútbol, basquet, tenis y más deportes de todo el mundo.",
+    "category": "deportes",
+    "difficulty": "intermedio",
+    "estimated_duration": 360,
+    "question_time_limit": 18,
+    "points_for_correct": 100,
+    "speed_bonus_enabled": true,
+    "max_speed_bonus": 75,
+    "created_at": "2025-06-26T13:35:00",
+    "updated_at": "2025-06-26T13:35:00",
+    "questions": [
+        {
+            "id": "q1",
+            "question": "⚽ ¿Qué país ha ganado más Copas del Mundo de fútbol?",
+            "type": "multiple_choice",
+            "options": ["Argentina", "Brasil", "Alemania", "Francia"],
+            "correct_answer": 1,
+            "explanation": "Brasil ha ganado 5 Copas del Mundo (1958, 1962, 1970, 1994, 2002).",
+            "points": 100,
+            "time_limit": 18
+        },
+        {
+            "id": "q2",
+            "question": "🏀 ¿Cuántos jugadores tiene un equipo de baloncesto en cancha?",
+            "type": "multiple_choice",
+            "options": ["4", "5", "6", "7"],
+            "correct_answer": 1,
+            "explanation": "En baloncesto juegan 5 jugadores por equipo simultáneamente.",
+            "points": 100,
+            "time_limit": 18
+        },
+        {
+            "id": "q3",
+            "question": "🎾 ¿En qué superficie se juega Wimbledon?",
+            "type": "multiple_choice",
+            "options": ["Arcilla", "Cemento", "Césped", "Sintético"],
+            "correct_answer": 2,
+            "explanation": "Wimbledon es famoso por ser el único Grand Slam que se juega en césped.",
+            "points": 100,
+            "time_limit": 18
+        },
+        {
+            "id": "q4",
+            "question": "🏊‍♂️ ¿Cuál es el estilo de natación más rápido?",
+            "type": "multiple_choice",
+            "options": ["Pecho", "Espalda", "Mariposa", "Crol"],
+            "correct_answer": 3,
+            "explanation": "El estilo crol (libre) es el más rápido de todos los estilos de natación.",
+            "points": 100,
+            "time_limit": 18
+        },
+        {
+            "id": "q5",
+            "question": "🏃‍♀️ ¿Cuál es la distancia de una maratón?",
+            "type": "multiple_choice",
+            "options": ["40 km", "41.5 km", "42.195 km", "43 km"],
+            "correct_answer": 2,
+            "explanation": "Una maratón oficial mide exactamente 42.195 kilómetros.",
+            "points": 100,
+            "time_limit": 18
+        },
+        {
+            "id": "q6",
+            "question": "🥇 ¿Cada cuántos años se celebran los Juegos Olímpicos de Verano?",
+            "type": "multiple_choice",
+            "options": ["2 años", "3 años", "4 años", "5 años"],
+            "correct_answer": 2,
+            "explanation": "Los Juegos Olímpicos de Verano se celebran cada 4 años.",
+            "points": 100,
+            "time_limit": 18
+        },
+        {
+            "id": "q7",
+            "question": "🏈 ¿En qué deporte se usa el término 'touchdown'?",
+            "type": "multiple_choice",
+            "options": ["Fútbol americano", "Rugby", "Béisbol", "Hockey"],
+            "correct_answer": 0,
+            "explanation": "El 'touchdown' es la jugada más importante del fútbol americano.",
+            "points": 100,
+            "time_limit": 18
+        },
+        {
+            "id": "q8",
+            "question": "🏆 ¿Cuál es el torneo de tenis más antiguo del mundo?",
+            "type": "multiple_choice",
+            "options": ["US Open", "Roland Garros", "Wimbledon", "Australian Open"],
+            "correct_answer": 2,
+            "explanation": "Wimbledon comenzó en 1877 y es el torneo de tenis más antiguo.",
+            "points": 100,
+            "time_limit": 18
+        },
+        {
+            "id": "q9",
+            "question": "⛳ ¿Cuántos hoyos tiene un campo de golf estándar?",
+            "type": "multiple_choice",
+            "options": ["16", "18", "20", "22"],
+            "correct_answer": 1,
+            "explanation": "Un campo de golf estándar tiene 18 hoyos.",
+            "points": 100,
+            "time_limit": 18
+        },
+        {
+            "id": "q10",
+            "question": "🏐 ¿Cuántos toques máximo puede dar un equipo de voleibol?",
+            "type": "multiple_choice",
+            "options": ["2", "3", "4", "5"],
+            "correct_answer": 1,
+            "explanation": "En voleibol, cada equipo puede tocar máximo 3 veces la pelota.",
+            "points": 100,
+            "time_limit": 18
+        }
+    ]
+}

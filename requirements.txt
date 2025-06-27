@@ -1,0 +1,89 @@
+# Dependencias del Proyecto - Plataforma de Quizzes
+
+# ===== INTERFAZ DE ADMINISTRACIÓN =====
+# Tkinter viene incluido con Python
+# CustomTkinter para UI moderna
+customtkinter==5.2.0
+
+# ===== SERVIDOR WEB Y API =====
+# Framework web principal
+Flask==2.3.3
+
+# WebSockets para comunicación en tiempo real
+Flask-SocketIO==5.3.6
+python-socketio==5.10.0
+
+# Servidor WSGI optimizado para SocketIO
+eventlet==0.33.3
+
+# Template engine (incluido con Flask pero especificamos versión)
+Jinja2==3.1.2
+
+# ===== UTILIDADES DE RED =====
+# Detección de IP y utilidades de red
+netifaces==0.11.0
+
+# Requests para pruebas de conectividad
+requests==2.31.0
+
+# ===== MANEJO DE DATOS =====
+# Validación de esquemas JSON
+jsonschema==4.19.0
+
+# Fechas y tiempo
+python-dateutil==2.8.2
+
+# ===== GRÁFICOS Y VISUALIZACIÓN =====
+# Para gráficos en la interfaz de administración
+matplotlib>=3.8.0
+
+# Pillow para manejo de imágenes
+Pillow>=10.4.0
+
+# ===== UTILIDADES ADICIONALES =====
+# Generación de IDs únicos
+uuid
+
+# Logging avanzado
+colorlog==6.7.0
+
+# Configuración desde archivos
+PyYAML==6.0.1
+
+# ===== DESARROLLO Y TESTING =====
+# Testing framework
+pytest==7.4.2
+
+# Cobertura de código
+pytest-cov==4.1.0
+
+# Linting de código
+flake8==6.0.0
+
+# Formateo de código
+black==23.7.0
+
+# ===== SEGURIDAD =====
+# Validación y sanitización de entrada
+bleach==6.0.0
+
+# ===== PACKAGING Y DISTRIBUCIÓN =====
+# Para crear ejecutables (opcional)
+# pyinstaller==5.13.2
+
+# ===== NOTAS DE INSTALACIÓN =====
+# Para instalar todas las dependencias:
+# pip install -r requirements.txt
+#
+# Para desarrollo:
+# pip install -r requirements.txt
+# 
+# Para crear entorno virtual:
+# python -m venv venv
+# venv\Scripts\activate  # Windows
+# source venv/bin/activate  # macOS/Linux
+#
+# Dependencias del sistema:
+# - Python 3.8 o superior
+# - Navegador web moderno (Chrome, Firefox, Safari)
+# - Red WiFi local

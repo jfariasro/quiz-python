@@ -1,0 +1,116 @@
+{
+    "id": "quiz-tecnologia-moderna-001",
+    "title": "💻 Tecnología Moderna",
+    "description": "¡Pon a prueba tus conocimientos tech! Desde smartphones hasta inteligencia artificial.",
+    "category": "tecnologia",
+    "difficulty": "intermedio",
+    "estimated_duration": 300,
+    "question_time_limit": 15,
+    "points_for_correct": 120,
+    "speed_bonus_enabled": true,
+    "max_speed_bonus": 80,
+    "created_at": "2025-06-26T13:40:00",
+    "updated_at": "2025-06-26T13:40:00",
+    "questions": [
+        {
+            "id": "q1",
+            "question": "📱 ¿En qué año se lanzó el primer iPhone?",
+            "type": "multiple_choice",
+            "options": ["2006", "2007", "2008", "2009"],
+            "correct_answer": 1,
+            "explanation": "El primer iPhone fue presentado por Steve Jobs en enero de 2007.",
+            "points": 120,
+            "time_limit": 15
+        },
+        {
+            "id": "q2",
+            "question": "🌐 ¿Qué significa 'WWW'?",
+            "type": "multiple_choice",
+            "options": ["World Wide Web", "World Wide Window", "Web Wide World", "World Web Wide"],
+            "correct_answer": 0,
+            "explanation": "WWW significa World Wide Web, creado por Tim Berners-Lee.",
+            "points": 120,
+            "time_limit": 15
+        },
+        {
+            "id": "q3",
+            "question": "💾 ¿Cuántos bits tiene un byte?",
+            "type": "multiple_choice",
+            "options": ["4", "6", "8", "10"],
+            "correct_answer": 2,
+            "explanation": "Un byte está compuesto por 8 bits.",
+            "points": 120,
+            "time_limit": 15
+        },
+        {
+            "id": "q4",
+            "question": "🤖 ¿Qué significa 'AI' en tecnología?",
+            "type": "multiple_choice",
+            "options": ["Application Interface", "Artificial Intelligence", "Automatic Integration", "Advanced Input"],
+            "correct_answer": 1,
+            "explanation": "AI significa Artificial Intelligence (Inteligencia Artificial).",
+            "points": 120,
+            "time_limit": 15
+        },
+        {
+            "id": "q5",
+            "question": "💡 ¿Quién fundó Microsoft?",
+            "type": "multiple_choice",
+            "options": ["Steve Jobs", "Bill Gates", "Mark Zuckerberg", "Larry Page"],
+            "correct_answer": 1,
+            "explanation": "Bill Gates y Paul Allen fundaron Microsoft en 1975.",
+            "points": 120,
+            "time_limit": 15
+        },
+        {
+            "id": "q6",
+            "question": "🔐 ¿Qué es un 'firewall'?",
+            "type": "multiple_choice",
+            "options": ["Un virus", "Una barrera de seguridad", "Un navegador", "Un procesador"],
+            "correct_answer": 1,
+            "explanation": "Un firewall es una barrera de seguridad que protege redes de accesos no autorizados.",
+            "points": 120,
+            "time_limit": 15
+        },
+        {
+            "id": "q7",
+            "question": "☁️ ¿Qué es 'la nube' en tecnología?",
+            "type": "multiple_choice",
+            "options": ["Internet", "Servidores remotos", "WiFi", "Bluetooth"],
+            "correct_answer": 1,
+            "explanation": "La nube se refiere a servidores remotos que almacenan y procesan datos.",
+            "points": 120,
+            "time_limit": 15
+        },
+        {
+            "id": "q8",
+            "question": "📷 ¿Qué significa 'pixel'?",
+            "type": "multiple_choice",
+            "options": ["Picture Element", "Picture Exclusive", "Photo Element", "Photo Exclusive"],
+            "correct_answer": 0,
+            "explanation": "Pixel es la abreviatura de 'Picture Element', el punto más pequeño de una imagen digital.",
+            "points": 120,
+            "time_limit": 15
+        },
+        {
+            "id": "q9",
+            "question": "⚡ ¿Qué es 'USB'?",
+            "type": "multiple_choice",
+            "options": ["Universal Serial Bus", "United System Bus", "Universal System Base", "United Serial Base"],
+            "correct_answer": 0,
+            "explanation": "USB significa Universal Serial Bus, un estándar de conexión.",
+            "points": 120,
+            "time_limit": 15
+        },
+        {
+            "id": "q10",
+            "question": "🎮 ¿Cuál fue la primera consola de videojuegos casera?",
+            "type": "multiple_choice",
+            "options": ["Atari 2600", "Nintendo NES", "Magnavox Odyssey", "Sega Genesis"],
+            "correct_answer": 2,
+            "explanation": "La Magnavox Odyssey fue la primera consola casera comercial en 1972.",
+            "points": 120,
+            "time_limit": 15
+        }
+    ]
+}

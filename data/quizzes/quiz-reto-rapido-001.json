@@ -1,0 +1,166 @@
+{
+    "id": "quiz-reto-rapido-001",
+    "title": "⚡ Reto Rápido - ¡Velocidad Mental!",
+    "description": "¡Quiz súper rápido para mentes ágiles! Preguntas cortas y tiempo límite reducido. ¿Puedes seguir el ritmo?",
+    "category": "desafio",
+    "difficulty": "facil",
+    "estimated_duration": 180,
+    "question_time_limit": 8,
+    "points_for_correct": 50,
+    "speed_bonus_enabled": true,
+    "max_speed_bonus": 100,
+    "created_at": "2025-06-26T13:50:00",
+    "updated_at": "2025-06-26T13:50:00",
+    "questions": [
+        {
+            "id": "q1",
+            "question": "🔢 2 + 2 = ?",
+            "type": "multiple_choice",
+            "options": ["3", "4", "5", "6"],
+            "correct_answer": 1,
+            "explanation": "¡Fácil! 2 + 2 = 4",
+            "points": 50,
+            "time_limit": 8
+        },
+        {
+            "id": "q2",
+            "question": "🎨 ¿Rojo + Azul = ?",
+            "type": "multiple_choice",
+            "options": ["Verde", "Morado", "Naranja", "Amarillo"],
+            "correct_answer": 1,
+            "explanation": "Rojo + Azul = Morado",
+            "points": 50,
+            "time_limit": 8
+        },
+        {
+            "id": "q3",
+            "question": "🐱 ¿Cómo hace el gato?",
+            "type": "multiple_choice",
+            "options": ["Guau", "Miau", "Mu", "Pio"],
+            "correct_answer": 1,
+            "explanation": "Los gatos hacen 'Miau'",
+            "points": 50,
+            "time_limit": 8
+        },
+        {
+            "id": "q4",
+            "question": "☀️ El sol sale por el...",
+            "type": "multiple_choice",
+            "options": ["Norte", "Sur", "Este", "Oeste"],
+            "correct_answer": 2,
+            "explanation": "El sol siempre sale por el Este",
+            "points": 50,
+            "time_limit": 8
+        },
+        {
+            "id": "q5",
+            "question": "📅 ¿Cuántos días tiene una semana?",
+            "type": "multiple_choice",
+            "options": ["5", "6", "7", "8"],
+            "correct_answer": 2,
+            "explanation": "Una semana tiene 7 días",
+            "points": 50,
+            "time_limit": 8
+        },
+        {
+            "id": "q6",
+            "question": "🔺 ¿Cuántos lados tiene un triángulo?",
+            "type": "multiple_choice",
+            "options": ["2", "3", "4", "5"],
+            "correct_answer": 1,
+            "explanation": "Un triángulo tiene 3 lados",
+            "points": 50,
+            "time_limit": 8
+        },
+        {
+            "id": "q7",
+            "question": "🌍 ¿En qué planeta vivimos?",
+            "type": "multiple_choice",
+            "options": ["Marte", "Venus", "Tierra", "Júpiter"],
+            "correct_answer": 2,
+            "explanation": "Vivimos en la Tierra",
+            "points": 50,
+            "time_limit": 8
+        },
+        {
+            "id": "q8",
+            "question": "🔤 Primera letra del alfabeto:",
+            "type": "multiple_choice",
+            "options": ["B", "A", "C", "Z"],
+            "correct_answer": 1,
+            "explanation": "La A es la primera letra",
+            "points": 50,
+            "time_limit": 8
+        },
+        {
+            "id": "q9",
+            "question": "❄️ ¿Cuándo nieva hace...?",
+            "type": "multiple_choice",
+            "options": ["Calor", "Frío", "Viento", "Lluvia"],
+            "correct_answer": 1,
+            "explanation": "Cuando nieva hace frío",
+            "points": 50,
+            "time_limit": 8
+        },
+        {
+            "id": "q10",
+            "question": "🚗 ¿De qué color para el semáforo?",
+            "type": "multiple_choice",
+            "options": ["Verde", "Amarillo", "Rojo", "Azul"],
+            "correct_answer": 2,
+            "explanation": "Con rojo el semáforo indica parar",
+            "points": 50,
+            "time_limit": 8
+        },
+        {
+            "id": "q11",
+            "question": "🎂 ¿Con qué soplas las velas?",
+            "type": "multiple_choice",
+            "options": ["Boca", "Nariz", "Oído", "Mano"],
+            "correct_answer": 0,
+            "explanation": "Soplas las velas con la boca",
+            "points": 50,
+            "time_limit": 8
+        },
+        {
+            "id": "q12",
+            "question": "⭐ ¿Cuántos puntas tiene una estrella?",
+            "type": "multiple_choice",
+            "options": ["4", "5", "6", "7"],
+            "correct_answer": 1,
+            "explanation": "Una estrella clásica tiene 5 puntas",
+            "points": 50,
+            "time_limit": 8
+        },
+        {
+            "id": "q13",
+            "question": "🐄 ¿Qué da la vaca?",
+            "type": "multiple_choice",
+            "options": ["Huevos", "Leche", "Miel", "Lana"],
+            "correct_answer": 1,
+            "explanation": "La vaca da leche",
+            "points": 50,
+            "time_limit": 8
+        },
+        {
+            "id": "q14",
+            "question": "🌙 ¿Cuándo sale la luna?",
+            "type": "multiple_choice",
+            "options": ["Día", "Noche", "Mañana", "Tarde"],
+            "correct_answer": 1,
+            "explanation": "La luna sale por la noche",
+            "points": 50,
+            "time_limit": 8
+        },
+        {
+            "id": "q15",
+            "question": "✋ ¿Cuántos dedos tienes en una mano?",
+            "type": "multiple_choice",
+            "options": ["4", "5", "6", "10"],
+            "correct_answer": 1,
+            "explanation": "Una mano tiene 5 dedos",
+            "points": 50,
+            "time_limit": 8
+        }
+    ]
+}

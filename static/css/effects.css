@@ -1,0 +1,452 @@
+/* 
+ * Estilos adicionales para loading, overlays y efectos especiales
+ * Complementa los estilos principales de la plataforma
+ */
+
+/* ===== LOADING OVERLAY ===== */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.loading-content {
+    text-align: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.loading-spinner-large {
+    width: 60px;
+    height: 60px;
+    border: 6px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #6c5ce7;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+/* ===== NOTIFICACIONES TOAST ===== */
+#alerts-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9998;
+    max-width: 400px;
+}
+
+.alert {
+    margin-bottom: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: none;
+    backdrop-filter: blur(10px);
+}
+
+.alert.slide-in-right {
+    animation: slideInRight 0.4s ease;
+}
+
+.alert.fade-out {
+    animation: fadeOutRight 0.3s ease forwards;
+}
+
+@keyframes fadeOutRight {
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* ===== EFECTOS DE VALIDACIÓN ===== */
+.form-control.is-valid {
+    border-color: #00b894;
+    box-shadow: 0 0 0 0.2rem rgba(0, 184, 148, 0.25);
+}
+
+.form-control.is-invalid {
+    border-color: #e17055;
+    box-shadow: 0 0 0 0.2rem rgba(225, 112, 85, 0.25);
+}
+
+/* ===== ESTADOS DE TIMER ===== */
+.timer-circle.timer-warning {
+    background: linear-gradient(135deg, #fdcb6e, #e17055);
+    animation: pulse 1s infinite;
+}
+
+.timer-circle.timer-danger {
+    background: linear-gradient(135deg, #e17055, #d63031);
+    animation: shake 0.5s infinite;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* ===== EFECTOS DE HOVER AVANZADOS ===== */
+.interactive-element {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.interactive-element::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.interactive-element:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* ===== LEADERBOARD AVANZADO ===== */
+.leaderboard-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.leaderboard-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(108, 92, 231, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.leaderboard-item:hover::before {
+    left: 100%;
+}
+
+.leaderboard-item.me {
+    background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+    color: white;
+    position: relative;
+}
+
+.leaderboard-item.me::after {
+    content: '👑';
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+}
+
+/* ===== MEDALLLAS Y RANKINGS ===== */
+.medal {
+    display: inline-block;
+    font-size: 1.5rem;
+    margin-right: 10px;
+    animation: bounce 2s infinite;
+    animation-delay: var(--delay, 0s);
+}
+
+.medal:nth-child(1) { --delay: 0s; }
+.medal:nth-child(2) { --delay: 0.2s; }
+.medal:nth-child(3) { --delay: 0.4s; }
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+/* ===== EFECTOS DE RESPUESTA ===== */
+.option-button.correct {
+    animation: correctAnswer 0.6s ease;
+}
+
+.option-button.incorrect {
+    animation: incorrectAnswer 0.6s ease;
+}
+
+@keyframes correctAnswer {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 184, 148, 0.5); }
+    100% { transform: scale(1); }
+}
+
+@keyframes incorrectAnswer {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+    100% { transform: translateX(0); }
+}
+
+/* ===== CONFETTI EFFECT ===== */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: #6c5ce7;
+    animation: confetti-fall 3s linear infinite;
+    z-index: 10000;
+}
+
+.confetti:nth-child(odd) {
+    background: #a29bfe;
+    animation-delay: 0.5s;
+}
+
+.confetti:nth-child(3n) {
+    background: #00b894;
+    animation-delay: 1s;
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* ===== PROGRESS BAR ANIMADO ===== */
+.progress-bar-custom.animated {
+    background: linear-gradient(45deg,
+        #6c5ce7 25%,
+        #a29bfe 25%,
+        #a29bfe 50%,
+        #6c5ce7 50%,
+        #6c5ce7 75%,
+        #a29bfe 75%,
+        #a29bfe);
+    background-size: 20px 20px;
+    animation: progress-stripe 1s linear infinite;
+}
+
+/* ===== MODO PANTALLA COMPLETA ===== */
+.fullscreen-mode {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--gradiente-primario);
+    z-index: 9997;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.fullscreen-mode .quiz-card {
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+}
+
+/* ===== EFECTOS DE SONIDO VISUAL ===== */
+.sound-wave {
+    display: inline-block;
+    margin: 0 2px;
+    width: 4px;
+    height: 20px;
+    background: currentColor;
+    animation: soundWave 1s ease-in-out infinite;
+}
+
+.sound-wave:nth-child(2) { animation-delay: 0.1s; }
+.sound-wave:nth-child(3) { animation-delay: 0.2s; }
+.sound-wave:nth-child(4) { animation-delay: 0.3s; }
+
+@keyframes soundWave {
+    0%, 100% { height: 20px; }
+    50% { height: 5px; }
+}
+
+/* ===== CONECTIVIDAD ===== */
+.connection-status {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.connection-status.connected {
+    background: rgba(0, 184, 148, 0.9);
+    color: white;
+}
+
+.connection-status.disconnected {
+    background: rgba(225, 112, 85, 0.9);
+    color: white;
+    animation: pulse 1s infinite;
+}
+
+/* ===== ACCESSIBILITY ===== */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* Focus indicators mejorados */
+.option-button:focus,
+.btn:focus {
+    outline: 3px solid #fdcb6e;
+    outline-offset: 2px;
+}
+
+/* ===== RESPONSIVE EFFECTS ===== */
+@media (max-width: 768px) {
+    .loading-spinner-large {
+        width: 40px;
+        height: 40px;
+        border-width: 4px;
+    }
+    
+    .loading-content {
+        font-size: 1rem;
+    }
+    
+    #alerts-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .confetti {
+        width: 6px;
+        height: 6px;
+    }
+    
+    .timer-circle {
+        width: 50px;
+        height: 50px;
+        font-size: 1rem;
+    }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    .loading-overlay,
+    #alerts-container,
+    .btn,
+    .connection-status {
+        display: none !important;
+    }
+    
+    .quiz-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    body {
+        background: white !important;
+    }
+}
+
+/* ===== ANIMACIONES DE ENTRADA ESPECÍFICAS ===== */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes zoomOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+}
+
+/* Clases de animación */
+.slide-in-left { animation: slideInLeft 0.6s ease forwards; }
+.slide-in-right { animation: slideInRight 0.6s ease forwards; }
+.slide-in-up { animation: slideInUp 0.6s ease forwards; }
+.slide-in-down { animation: slideInDown 0.6s ease forwards; }
+.zoom-in { animation: zoomIn 0.6s ease forwards; }
+.zoom-out { animation: zoomOut 0.6s ease forwards; }
+.fade-in { animation: fadeIn 0.6s ease forwards; }

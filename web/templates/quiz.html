@@ -1,0 +1,462 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz en Vivo - {{ quiz_title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <!-- Barra de progreso -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>Pregunta <span id="currentQuestion">1</span> de <span id="totalQuestions">10</span></span>
+                    <span class="badge bg-primary">{{ participant_name }}</span>
+                </div>
+                <div class="progress-custom">
+                    <div class="progress-bar-custom" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Área principal del quiz -->
+        <div id="quizArea">
+            <!-- Estado inicial: esperando pregunta -->
+            <div id="waitingState" class="text-center">
+                <div class="quiz-card">
+                    <div class="quiz-body">
+                        <i class="fas fa-hourglass-half fa-3x text-muted mb-3"></i>
+                        <h4>Preparándose...</h4>
+                        <p class="text-muted">Esperando la siguiente pregunta</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estado: mostrando pregunta -->
+            <div id="questionState" class="d-none">
+                <div class="quiz-card">
+                    <div class="quiz-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 id="questionText">Pregunta aparecerá aquí</h3>
+                            </div>
+                            <div class="col-auto">
+                                <div class="timer-circle">
+                                    <span id="questionTimer">30</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quiz-body">
+                        <div id="optionsContainer">
+                            <!-- Las opciones se cargan dinámicamente -->
+                        </div>
+                        
+                        <div class="mt-4 text-center d-none" id="answerSubmitted">
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i>
+                                ¡Respuesta enviada! Esperando resultados...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estado: mostrando resultados -->
+            <div id="resultsState" class="d-none">
+                <div class="quiz-card">
+                    <div class="quiz-header text-center">
+                        <h3>Resultados de la Pregunta</h3>
+                    </div>
+                    
+                    <div class="quiz-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <div id="answerResult">
+                                            <!-- Resultado de la respuesta -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h5>Tu Puntuación</h5>
+                                        <h2 class="text-primary" id="currentScore">0</h2>
+                                        <small class="text-muted">Puntos ganados: <span id="pointsEarned">0</span></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Distribución de respuestas -->
+                        <div class="mt-4">
+                            <h6>Distribución de Respuestas</h6>
+                            <div id="answerDistribution">
+                                <!-- Se llena dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estado: leaderboard -->
+            <div id="leaderboardState" class="d-none">
+                <div class="quiz-card">
+                    <div class="quiz-header text-center">
+                        <i class="fas fa-trophy fa-2x mb-2"></i>
+                        <h3>Ranking Actual</h3>
+                    </div>
+                    
+                    <div class="quiz-body">
+                        <div id="leaderboardList">
+                            <!-- Se llena dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estado: quiz finalizado -->
+            <div id="finishedState" class="d-none">
+                <div class="quiz-card">
+                    <div class="quiz-header text-center">
+                        <i class="fas fa-flag-checkered fa-3x mb-3"></i>
+                        <h2>¡Quiz Finalizado!</h2>
+                    </div>
+                    
+                    <div class="quiz-body text-center">
+                        <div class="row">
+                            <div class="col-md-6 mx-auto">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body">
+                                        <h4>Tu Posición Final</h4>
+                                        <h1 id="finalPosition">#1</h1>
+                                        <p id="finalScore">0 puntos</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button class="btn btn-quiz btn-lg" onclick="window.location.href='/'">
+                                <i class="fas fa-home me-2"></i>
+                                Volver al Inicio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel de información lateral -->
+        <div class="mt-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <i class="fas fa-star fa-2x text-warning mb-2"></i>
+                            <h6>Puntuación Total</h6>
+                            <h4 class="text-primary" id="totalScore">0</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-2x text-success mb-2"></i>
+                            <h6>Posición Actual</h6>
+                            <h4 class="text-success" id="currentPosition">#-</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Referencias a elementos
+    const currentQuestion = document.getElementById('currentQuestion');
+    const totalQuestions = document.getElementById('totalQuestions');
+    const progressBar = document.getElementById('progressBar');
+    const questionTimer = document.getElementById('questionTimer');
+    const questionText = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const totalScore = document.getElementById('totalScore');
+    const currentPosition = document.getElementById('currentPosition');
+    
+    // Estados
+    const waitingState = document.getElementById('waitingState');
+    const questionState = document.getElementById('questionState');
+    const resultsState = document.getElementById('resultsState');
+    const leaderboardState = document.getElementById('leaderboardState');
+    const finishedState = document.getElementById('finishedState');
+    
+    // Variables de estado
+    let currentQuestionData = null;
+    let selectedAnswer = null;
+    let answerSubmitted = false;
+    let participantScore = 0;
+    let timerInterval = null;
+    
+    // Inicializar Socket.IO
+    const socket = initSocket();
+    
+    // Unirse a la sesión
+    socket.emit('join_session', {
+        session_id: '{{ session_id }}',
+        participant_id: '{{ participant_id }}'
+    });
+    
+    // Event listeners del servidor
+    socket.on('session_state', function(data) {
+        updateQuizProgress(data.current_question + 1, data.total_questions);
+    });
+    
+    socket.on('question_started', function(data) {
+        showQuestion(data);
+        startQuestionTimer(data.time_limit);
+    });
+    
+    socket.on('question_results', function(data) {
+        showResults(data);
+    });
+    
+    socket.on('leaderboard_show', function(data) {
+        showLeaderboard(data);
+    });
+    
+    socket.on('quiz_finished', function(data) {
+        showFinalResults(data);
+    });
+    
+    socket.on('state_change', function(data) {
+        console.log('Estado cambiado:', data.new_state);
+    });
+    
+    // Funciones principales
+    function showState(state) {
+        // Ocultar todos los estados
+        [waitingState, questionState, resultsState, leaderboardState, finishedState]
+            .forEach(el => el.classList.add('d-none'));
+        
+        // Mostrar el estado actual
+        if (state) {
+            state.classList.remove('d-none');
+        }
+    }
+    
+    function showQuestion(data) {
+        currentQuestionData = data;
+        selectedAnswer = null;
+        answerSubmitted = false;
+        
+        // Actualizar UI
+        questionText.textContent = data.question;
+        currentQuestion.textContent = data.question_index + 1;
+        
+        // Crear opciones
+        optionsContainer.innerHTML = '';
+        data.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'option-button';
+            button.textContent = option;
+            button.onclick = () => selectAnswer(index, button);
+            optionsContainer.appendChild(button);
+        });
+        
+        // Mostrar estado de pregunta
+        showState(questionState);
+        
+        // Ocultar mensaje de respuesta enviada
+        document.getElementById('answerSubmitted').classList.add('d-none');
+    }
+    
+    function selectAnswer(answerIndex, buttonElement) {
+        if (answerSubmitted) return;
+        
+        // Remover selección anterior
+        document.querySelectorAll('.option-button').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        
+        // Seleccionar nueva opción
+        buttonElement.classList.add('selected');
+        selectedAnswer = answerIndex;
+        
+        // Enviar respuesta automáticamente
+        submitAnswer();
+    }
+    
+    function submitAnswer() {
+        if (answerSubmitted || selectedAnswer === null) return;
+        
+        answerSubmitted = true;
+        
+        // Enviar al servidor
+        socket.emit('submit_answer', {
+            session_id: '{{ session_id }}',
+            participant_id: '{{ participant_id }}',
+            answer: selectedAnswer
+        });
+        
+        // Mostrar confirmación
+        document.getElementById('answerSubmitted').classList.remove('d-none');
+        
+        // Deshabilitar opciones
+        document.querySelectorAll('.option-button').forEach(btn => {
+            btn.disabled = true;
+        });
+    }
+    
+    function showResults(data) {
+        // Encontrar resultado del participante
+        const myResult = data.participant_results.find(
+            r => r.participant_id === '{{ participant_id }}'
+        );
+        
+        if (myResult) {
+            participantScore += myResult.points;
+            totalScore.textContent = participantScore;
+            
+            // Mostrar resultado
+            const answerResult = document.getElementById('answerResult');
+            const pointsEarned = document.getElementById('pointsEarned');
+            const currentScore = document.getElementById('currentScore');
+            
+            if (myResult.correct) {
+                answerResult.innerHTML = `
+                    <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
+                    <h5 class="text-success">¡Correcto!</h5>
+                    <p>Tiempo de respuesta: ${myResult.response_time.toFixed(1)}s</p>
+                `;
+            } else {
+                answerResult.innerHTML = `
+                    <i class="fas fa-times-circle fa-3x text-danger mb-2"></i>
+                    <h5 class="text-danger">Incorrecto</h5>
+                    <p>La respuesta correcta era: ${currentQuestionData.options[data.correct_answer]}</p>
+                `;
+            }
+            
+            pointsEarned.textContent = myResult.points;
+            currentScore.textContent = participantScore;
+        }
+        
+        // Mostrar distribución de respuestas
+        showAnswerDistribution(data.answer_distribution, data.correct_answer);
+        
+        showState(resultsState);
+    }
+    
+    function showAnswerDistribution(distribution, correctAnswer) {
+        const container = document.getElementById('answerDistribution');
+        container.innerHTML = '';
+        
+        if (!currentQuestionData) return;
+        
+        currentQuestionData.options.forEach((option, index) => {
+            const count = distribution[index] || 0;
+            const isCorrect = index === correctAnswer;
+            const percentage = (count / Object.values(distribution).reduce((a, b) => a + b, 1)) * 100;
+            
+            const div = document.createElement('div');
+            div.className = `mb-2 ${isCorrect ? 'border-success' : ''} border rounded p-2`;
+            div.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>${option} ${isCorrect ? '<i class="fas fa-check text-success"></i>' : ''}</span>
+                    <span class="badge ${isCorrect ? 'bg-success' : 'bg-secondary'}">${count}</span>
+                </div>
+                <div class="progress mt-1" style="height: 5px;">
+                    <div class="progress-bar ${isCorrect ? 'bg-success' : 'bg-secondary'}" 
+                         style="width: ${percentage}%"></div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+    
+    function showLeaderboard(data) {
+        const container = document.getElementById('leaderboardList');
+        container.innerHTML = '';
+        
+        data.leaderboard.forEach((participant, index) => {
+            const isMe = participant.participant_id === '{{ participant_id }}';
+            const div = document.createElement('div');
+            div.className = `list-group-item d-flex justify-content-between align-items-center ${isMe ? 'bg-light border-primary' : ''}`;
+            
+            const medal = index < 3 ? ['🥇', '🥈', '🥉'][index] : `#${index + 1}`;
+            
+            div.innerHTML = `
+                <div>
+                    <span class="me-2">${medal}</span>
+                    <strong>${participant.name}</strong>
+                    ${isMe ? '<i class="fas fa-user text-primary ms-1"></i>' : ''}
+                </div>
+                <span class="badge bg-primary">${participant.score} pts</span>
+            `;
+            
+            container.appendChild(div);
+            
+            if (isMe) {
+                currentPosition.textContent = `#${index + 1}`;
+            }
+        });
+        
+        showState(leaderboardState);
+    }
+    
+    function showFinalResults(data) {
+        const myResult = data.leaderboard.find(
+            p => p.participant_id === '{{ participant_id }}'
+        );
+        
+        if (myResult) {
+            document.getElementById('finalPosition').textContent = `#${myResult.rank}`;
+            document.getElementById('finalScore').textContent = `${myResult.score} puntos`;
+        }
+        
+        showState(finishedState);
+    }
+    
+    function startQuestionTimer(timeLimit) {
+        let timeLeft = timeLimit;
+        questionTimer.textContent = timeLeft;
+        
+        if (timerInterval) {
+            clearInterval(timerInterval);
+        }
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            questionTimer.textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                // Tiempo agotado, deshabilitar opciones
+                document.querySelectorAll('.option-button').forEach(btn => {
+                    btn.disabled = true;
+                });
+            }
+        }, 1000);
+    }
+    
+    function updateQuizProgress(current, total) {
+        if (currentQuestion) currentQuestion.textContent = current;
+        if (totalQuestions) totalQuestions.textContent = total;
+        
+        const percentage = (current / total) * 100;
+        if (progressBar) {
+            progressBar.style.width = `${percentage}%`;
+        }
+    }
+    
+    // Inicialización
+    showState(waitingState);
+});
+</script>
+{% endblock %}

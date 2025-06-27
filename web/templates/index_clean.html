@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+
+{% block title %}Únete al Quiz{% endblock %}
+
+{% block extra_css %}
+<!-- Estilos específicos para la página de inicio -->
+<style>
+    body {
+        background: var(--gradiente-primario);
+    }
+    
+    .hero-section {
+        text-align: center;
+        padding: 3rem 0;
+        color: white;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+        font-weight: var(--peso-extra-negrita);
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <h1 class="hero-title">
+            <i class="fas fa-brain me-3"></i>
+            Quiz Platform
+        </h1>
+        <p class="hero-subtitle">¡Pon a prueba tus conocimientos y compite con otros!</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="quiz-card">
+                <div class="quiz-header">
+                    <i class="fas fa-gamepad fa-3x mb-3"></i>
+                    <h2>{{ quiz_title or 'Quiz Disponible' }}</h2>
+                    <p class="mb-0">¡Únete y demuestra tus conocimientos!</p>
+                </div>
+                
+                <div class="quiz-body">
+                    {% if can_join %}
+                        <form id="join-form" class="validate-form" data-form-type="join-session">
+                            <div class="mb-4">
+                                <label for="session-id" class="form-label">
+                                    <i class="fas fa-key me-2"></i>
+                                    Código de Sesión
+                                </label>
+                                <input 
+                                    type="text" 
+                                    class="form-control form-control-lg text-center" 
+                                    id="session-id"
+                                    name="sessionId"
+                                    placeholder="ABC123"
+                                    data-validate="required|sessionId"
+                                    data-format="session-id"
+                                    data-field-name="Código de sesión"
+                                    maxlength="6"
+                                    required
+                                >
+                                <div class="form-text">
+                                    Ingresa el código de 6 caracteres proporcionado por el moderador
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="participant-name" class="form-label">
+                                    <i class="fas fa-user me-2"></i>
+                                    Tu Nombre
+                                </label>
+                                <input 
+                                    type="text" 
+                                    class="form-control form-control-lg" 
+                                    id="participant-name"
+                                    name="participantName"
+                                    placeholder="Escribe tu nombre aquí..."
+                                    data-validate="required|participantName"
+                                    data-format="participant-name"
+                                    data-field-name="Nombre"
+                                    maxlength="20"
+                                    required
+                                >
+                                <div class="form-text">
+                                    Entre 2 y 20 caracteres (solo letras, números y espacios)
+                                </div>
+                            </div>
+                            
+                            <div class="quiz-stats mb-4">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="stat-item">
+                                            <i class="fas fa-clock text-primary"></i>
+                                            <div class="stat-label">Estado</div>
+                                            <div class="stat-value">
+                                                <span class="status-indicator status-waiting"></span>
+                                                <span id="session-status">Esperando</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="stat-item">
+                                            <i class="fas fa-users text-success"></i>
+                                            <div class="stat-label">Participantes</div>
+                                            <div class="stat-value">
+                                                <span class="participants-count" id="participants-count">0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="stat-item">
+                                            <i class="fas fa-wifi text-info"></i>
+                                            <div class="stat-label">Conexión</div>
+                                            <div class="stat-value">
+                                                <span id="connection-status">Verificando...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-quiz btn-lg w-100" id="join-btn">
+                                <i class="fas fa-rocket me-2"></i>
+                                ¡Unirse al Quiz!
+                            </button>
+                        </form>
+                    {% else %}
+                        <div class="text-center">
+                            <div class="quiz-unavailable">
+                                <i class="fas fa-lock fa-4x text-muted mb-4"></i>
+                                <h4>Quiz No Disponible</h4>
+                                <p class="text-muted mb-4">
+                                    {{ unavailable_reason or 'El quiz no está aceptando nuevos participantes en este momento.' }}
+                                </p>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary" onclick="location.reload()">
+                                        <i class="fas fa-refresh me-2"></i>
+                                        Actualizar Página
+                                    </button>
+                                    <a href="/admin" class="btn btn-secondary">
+                                        <i class="fas fa-cog me-2"></i>
+                                        Panel de Administración
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel de información -->
+        <div class="col-md-4">
+            <div class="info-panel">
+                <!-- Instrucciones -->
+                <div class="info-card mb-4">
+                    <div class="info-header">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <h5>¿Cómo Jugar?</h5>
+                    </div>
+                    <div class="info-content">
+                        <ol class="instructions-list">
+                            <li>Ingresa el código de sesión que te proporcionó el moderador</li>
+                            <li>Escribe tu nombre (será visible para otros participantes)</li>
+                            <li>Haz clic en "Unirse al Quiz" y espera a que comience</li>
+                            <li>Responde las preguntas lo más rápido posible</li>
+                            <li>¡Compite por el primer lugar!</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <!-- Consejos -->
+                <div class="info-card mb-4">
+                    <div class="info-header">
+                        <i class="fas fa-star me-2"></i>
+                        <h5>Consejos</h5>
+                    </div>
+                    <div class="info-content">
+                        <div class="tips-list">
+                            <div class="tip-item">
+                                <i class="fas fa-bolt text-warning"></i>
+                                <span>La velocidad cuenta: responder rápido da más puntos</span>
+                            </div>
+                            <div class="tip-item">
+                                <i class="fas fa-target text-success"></i>
+                                <span>La precisión es clave: respuestas incorrectas no dan puntos</span>
+                            </div>     
+                            <div class="tip-item">
+                                <i class="fas fa-signal text-info"></i>
+                                <span>Mantén buena conexión a internet</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Estado del sistema -->
+                <div class="info-card">
+                    <div class="info-header">
+                        <i class="fas fa-server me-2"></i>
+                        <h5>Estado del Sistema</h5>
+                    </div>
+                    <div class="info-content">
+                        <div class="system-status">
+                            <div class="status-item">
+                                <span class="status-label">Servidor:</span>
+                                <span class="badge bg-success" id="server-status">
+                                    <i class="fas fa-circle"></i> En Línea
+                                </span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Última actualización:</span>
+                                <span class="text-muted" id="last-update">Cargando...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/quiz-client.js') }}"></script>  
+<script src="{{ url_for('static', filename='js/form-handler.js') }}"></script>
+<script>
+    // Marcar el body como página de quiz
+    document.body.classList.add('quiz-page');
+    
+    // Actualizar estado del sistema
+    function updateSystemStatus() {
+        const lastUpdateElement = document.getElementById('last-update');
+        if (lastUpdateElement) {
+            const now = new Date();
+            lastUpdateElement.textContent = now.toLocaleTimeString('es-ES');
+        }
+    }
+    
+    // Verificar estado del servidor periódicamente
+    function checkServerStatus() {
+        fetch('/api/status')
+            .then(response => response.ok)
+            .then(isOnline => {
+                const statusElement = document.getElementById('server-status');
+                if (statusElement) {
+                    if (isOnline) {
+                        statusElement.innerHTML = '<i class="fas fa-circle"></i> En Línea';
+                        statusElement.className = 'badge bg-success';
+                    } else {
+                        statusElement.innerHTML = '<i class="fas fa-circle"></i> Fuera de Línea';
+                        statusElement.className = 'badge bg-danger';
+                    }
+                }
+                updateSystemStatus();
+            })
+            .catch(() => {
+                const statusElement = document.getElementById('server-status');
+                if (statusElement) {
+                    statusElement.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error';
+                    statusElement.className = 'badge bg-warning';
+                }
+            });
+    }
+    
+    // Manejar envío del formulario
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('join-form');
+        const sessionIdInput = document.getElementById('session-id');
+        const participantNameInput = document.getElementById('participant-name');
+        
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const sessionId = sessionIdInput.value.trim().toUpperCase();
+                const participantName = participantNameInput.value.trim();
+                
+                if (!sessionId || !participantName) {
+                    alert('Por favor completa todos los campos');
+                    return;
+                }
+                
+                const submitBtn = document.getElementById('join-btn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uniéndose...';
+                
+                // Enviar solicitud para unirse
+                fetch('/join', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        session_id: sessionId,
+                        participant_name: participantName 
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Redirigir a la sala de espera
+                        window.location.href = data.redirect_url || '/lobby';
+                    } else {
+                        alert(data.error || 'Error al unirse al quiz');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-rocket me-2"></i>¡Unirse al Quiz!';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error de conexión. Intenta nuevamente.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-rocket me-2"></i>¡Unirse al Quiz!';
+                });
+            });
+        }
+        
+        // Inicializar estado del sistema
+        updateSystemStatus();
+        checkServerStatus();
+        
+        // Verificar estado cada 30 segundos
+        setInterval(checkServerStatus, 30000);
+        
+        // Actualizar timestamp cada segundo
+        setInterval(updateSystemStatus, 1000);
+        
+        // Enfocar el primer campo del formulario
+        if (sessionIdInput) {
+            sessionIdInput.focus();
+        }
+        
+        // Formatear código de sesión automáticamente
+        if (sessionIdInput) {
+            sessionIdInput.addEventListener('input', function() {
+                this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            });
+        }
+    });
+</script>
+{% endblock %}

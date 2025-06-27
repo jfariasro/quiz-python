@@ -1,0 +1,136 @@
+{
+    "id": "quiz-cultura-general-divertida-001",
+    "title": "🌍 Cultura General Divertida",
+    "description": "¡Un quiz lleno de preguntas curiosas y datos increíbles del mundo! Perfecto para jugar con amigos.",
+    "category": "entretenimiento",
+    "difficulty": "intermedio",
+    "estimated_duration": 480,
+    "question_time_limit": 20,
+    "points_for_correct": 100,
+    "speed_bonus_enabled": true,
+    "max_speed_bonus": 50,
+    "created_at": "2025-06-26T13:30:00",
+    "updated_at": "2025-06-26T13:30:00",
+    "questions": [
+        {
+            "id": "q1",
+            "question": "🦒 ¿Cuál es el animal más alto del mundo?",
+            "type": "multiple_choice",
+            "options": ["Elefante africano", "Jirafa", "Oso polar", "Canguro"],
+            "correct_answer": 1,
+            "explanation": "¡Correcto! Las jirafas pueden medir hasta 6 metros de altura.",
+            "points": 100,
+            "time_limit": 20
+        },
+        {
+            "id": "q2",
+            "question": "🍕 ¿En qué país se inventó la pizza?",
+            "type": "multiple_choice",
+            "options": ["Francia", "España", "Italia", "Grecia"],
+            "correct_answer": 2,
+            "explanation": "¡Sí! La pizza moderna nació en Nápoles, Italia.",
+            "points": 100,
+            "time_limit": 20
+        },
+        {
+            "id": "q3",
+            "question": "🌍 ¿Cuál es el continente más pequeño?",
+            "type": "multiple_choice",
+            "options": ["Europa", "Oceanía", "Antártida", "Asia"],
+            "correct_answer": 1,
+            "explanation": "Oceanía es el continente más pequeño con solo 8.5 millones de km².",
+            "points": 100,
+            "time_limit": 20
+        },
+        {
+            "id": "q4",
+            "question": "🎬 ¿Quién dirigió la película 'Titanic'?",
+            "type": "multiple_choice",
+            "options": ["Steven Spielberg", "James Cameron", "Martin Scorsese", "Christopher Nolan"],
+            "correct_answer": 1,
+            "explanation": "James Cameron dirigió esta épica película de 1997.",
+            "points": 100,
+            "time_limit": 20
+        },
+        {
+            "id": "q5",
+            "question": "🧠 ¿Qué porcentaje del cerebro utilizamos realmente?",
+            "type": "multiple_choice",
+            "options": ["10%", "25%", "50%", "Prácticamente el 100%"],
+            "correct_answer": 3,
+            "explanation": "¡Es un mito! Utilizamos prácticamente todo nuestro cerebro.",
+            "points": 100,
+            "time_limit": 20
+        },
+        {
+            "id": "q6",
+            "question": "🎵 ¿Cuántas cuerdas tiene una guitarra estándar?",
+            "type": "multiple_choice",
+            "options": ["4", "5", "6", "7"],
+            "correct_answer": 2,
+            "explanation": "Una guitarra clásica tiene 6 cuerdas afinadas en Mi, La, Re, Sol, Si, Mi.",
+            "points": 100,
+            "time_limit": 20
+        },
+        {
+            "id": "q7",
+            "question": "🌈 ¿Cuántos colores tiene el arcoíris?",
+            "type": "multiple_choice",
+            "options": ["5", "6", "7", "8"],
+            "correct_answer": 2,
+            "explanation": "El arcoíris tiene 7 colores: rojo, naranja, amarillo, verde, azul, añil y violeta.",
+            "points": 100,
+            "time_limit": 20
+        },
+        {
+            "id": "q8",
+            "question": "⚡ ¿Qué es más rápido: el sonido o la luz?",
+            "type": "multiple_choice",
+            "options": ["El sonido", "La luz", "Van igual", "Depende del medio"],
+            "correct_answer": 1,
+            "explanation": "La luz viaja a 300,000 km/s, mientras que el sonido solo a 343 m/s.",
+            "points": 100,
+            "time_limit": 20
+        },
+        {
+            "id": "q9",
+            "question": "🦈 ¿Los tiburones tienen huesos?",
+            "type": "multiple_choice",
+            "options": ["Sí, como todos los peces", "No, tienen cartílago", "Solo algunos", "Solo cuando son adultos"],
+            "correct_answer": 1,
+            "explanation": "Los tiburones tienen esqueleto de cartílago, no de hueso.",
+            "points": 100,
+            "time_limit": 20
+        },
+        {
+            "id": "q10",
+            "question": "🥶 ¿Cuál es la temperatura más fría posible?",
+            "type": "multiple_choice",
+            "options": ["-100°C", "-200°C", "-273.15°C", "-500°C"],
+            "correct_answer": 2,
+            "explanation": "El cero absoluto es -273.15°C o 0 Kelvin, donde se detiene todo movimiento molecular.",
+            "points": 100,
+            "time_limit": 20
+        },
+        {
+            "id": "q11",
+            "question": "🍯 ¿La miel puede caducar?",
+            "type": "multiple_choice",
+            "options": ["Sí, en 1 año", "Sí, en 5 años", "No, nunca caduca", "Solo si se contamina"],
+            "correct_answer": 2,
+            "explanation": "¡La miel es eterna! Se han encontrado mieles de 3000 años perfectamente comestibles.",
+            "points": 100,
+            "time_limit": 20
+        },
+        {
+            "id": "q12",
+            "question": "🌙 ¿Cuántas personas han caminado en la Luna?",
+            "type": "multiple_choice",
+            "options": ["6", "8", "12", "18"],
+            "correct_answer": 2,
+            "explanation": "Exactamente 12 astronautas han caminado en la superficie lunar entre 1969 y 1972.",
+            "points": 100,
+            "time_limit": 20
+        }
+    ]
+}

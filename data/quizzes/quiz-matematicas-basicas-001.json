@@ -1,0 +1,99 @@
+{
+    "id": "quiz-matematicas-basicas-001",
+    "title": "Matemáticas Básicas",
+    "description": "Quiz de matemáticas para nivel secundaria con operaciones básicas y álgebra simple.",
+    "category": "educacion",
+    "difficulty": "intermedio",
+    "estimated_duration": 300,
+    "question_time_limit": 30,
+    "points_for_correct": 100,
+    "speed_bonus_enabled": true,
+    "max_speed_bonus": 50,
+    "created_at": "2024-01-15T10:00:00",
+    "updated_at": "2024-01-15T10:00:00",
+    "questions": [
+        {
+            "id": "q1",
+            "question": "¿Cuál es el resultado de 15 + 27?",
+            "type": "multiple_choice",
+            "options": ["40", "42", "44", "46"],
+            "correct_answer": 1,
+            "explanation": "15 + 27 = 42",
+            "points": 100,
+            "time_limit": 30
+        },
+        {
+            "id": "q2",
+            "question": "Si x = 5, ¿cuál es el valor de 3x + 2?",
+            "type": "multiple_choice",
+            "options": ["15", "17", "19", "21"],
+            "correct_answer": 1,
+            "explanation": "3(5) + 2 = 15 + 2 = 17",
+            "points": 100,
+            "time_limit": 30
+        },
+        {
+            "id": "q3",
+            "question": "¿Cuál es el área de un rectángulo de 8m de largo y 5m de ancho?",
+            "type": "multiple_choice",
+            "options": ["30 m²", "35 m²", "40 m²", "45 m²"],
+            "correct_answer": 2,
+            "explanation": "Área = largo × ancho = 8 × 5 = 40 m²",
+            "points": 100,
+            "time_limit": 30
+        },
+        {
+            "id": "q4",
+            "question": "¿Cuál es el resultado de 144 ÷ 12?",
+            "type": "multiple_choice",
+            "options": ["10", "11", "12", "13"],
+            "correct_answer": 2,
+            "explanation": "144 ÷ 12 = 12",
+            "points": 100,
+            "time_limit": 30
+        },
+        {
+            "id": "q5",
+            "question": "¿Cuál es el perímetro de un cuadrado con lado de 6 cm?",
+            "type": "multiple_choice",
+            "options": ["20 cm", "22 cm", "24 cm", "26 cm"],
+            "correct_answer": 2,
+            "explanation": "Perímetro = 4 × lado = 4 × 6 = 24 cm",
+            "points": 100,
+            "time_limit": 30
+        },
+        {
+            "id": "q6",
+            "question": "Si un artículo cuesta $50 y tiene 20% de descuento, ¿cuál es el precio final?",
+            "type": "multiple_choice",
+            "options": ["$35", "$40", "$45", "$30"],
+            "correct_answer": 1,
+            "explanation": "Descuento = $50 × 0.20 = $10, Precio final = $50 - $10 = $40",
+            "points": 100,
+            "time_limit": 30
+        },
+        {
+            "id": "q7",
+            "question": "¿Cuál es el resultado de 7²?",
+            "type": "multiple_choice",
+            "options": ["42", "45", "49", "51"],
+            "correct_answer": 2,
+            "explanation": "7² = 7 × 7 = 49",
+            "points": 100,
+            "time_limit": 30
+        },
+        {
+            "id": "q8",
+            "question": "¿Cuánto es el 25% de 80?",
+            "type": "multiple_choice",
+            "options": ["15", "18", "20", "22"],
+            "correct_answer": 2,
+            "explanation": "25% de 80 = 0.25 × 80 = 20",
+            "points": 100,
+            "time_limit": 30
+        }
+    ],
+    "tags": ["matematicas", "algebra", "geometria", "porcentajes"],
+    "author": "Sistema Quiz",
+    "version": "1.0"
+}

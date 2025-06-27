@@ -1,0 +1,532 @@
+{% extends "base.html" %}
+
+{% block title %}Sala de Espera - {{ quiz_title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .lobby-container {
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .session-info {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .waiting-animation {
+        animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-10px);
+        }
+        60% {
+            transform: translateY(-5px);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lobby-container">
+    <div class="container">
+        <!-- Encabezado de la sesión -->
+        <div class="session-info">
+            <div class="session-id-display">
+                <h1 class="session-id">{{ session_id or 'ABC123' }}</h1>
+                <p class="text-muted">Código de Sesión</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Panel principal de lobby -->
+            <div class="col-lg-8">
+                <div class="quiz-card">
+                    <div class="quiz-header">
+                        <div class="waiting-animation">
+                            <i class="fas fa-hourglass-half fa-3x mb-3"></i>
+                        </div>
+                        <h2>{{ quiz_title or 'Quiz en Preparación' }}</h2>
+                        <p class="mb-0">Esperando a que el moderador inicie el quiz...</p>
+                    </div>
+                    
+                    <div class="quiz-body">
+                        <!-- Información del participante -->
+                        <div class="participant-welcome mb-4">
+                            <div class="alert alert-success">
+                                <i class="fas fa-user-check me-2"></i>
+                                ¡Hola <strong id="participant-name">{{ participant_name or 'Participante' }}</strong>! 
+                                Estás conectado y listo para comenzar.
+                            </div>
+                        </div>
+                        
+                        <!-- Estadísticas del lobby -->
+                        <div class="session-details mb-4">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="detail-item">
+                                        <i class="fas fa-users text-primary"></i>
+                                        <div class="detail-label">Participantes</div>
+                                        <div class="detail-value">
+                                            <span id="participants-count">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-item">
+                                        <i class="fas fa-question-circle text-info"></i>
+                                        <div class="detail-label">Preguntas</div>
+                                        <div class="detail-value">
+                                            <span id="questions-count">{{ question_count or '?' }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-item">
+                                        <i class="fas fa-clock text-warning"></i>
+                                        <div class="detail-label">Estado</div>
+                                        <div class="detail-value">
+                                            <span id="session-status" class="status-indicator status-waiting">Esperando</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Mensaje de estado -->
+                        <div class="status-message mb-4" id="status-message">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <span id="status-text">Esperando a que el moderador inicie el quiz...</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Botones de acción -->
+                        <div class="action-buttons">
+                            <button class="btn btn-danger" id="leave-btn">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                Salir del Lobby
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel lateral -->
+            <div class="col-lg-4">
+                <!-- Lista de participantes -->
+                <div class="participants-container">
+                    <div class="participants-header">
+                        <h5>
+                            <i class="fas fa-users me-2"></i>
+                            Participantes
+                            <span class="participants-count" id="participants-count-badge">0</span>
+                        </h5>
+                    </div>
+                    <div class="participants-list" id="participants-list">
+                        <!-- Los participantes se cargarán dinámicamente -->
+                        <div class="text-center text-muted">
+                            <i class="fas fa-spinner fa-spin me-2"></i>
+                            Cargando participantes...
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Información del quiz -->
+                <div class="info-card">
+                    <div class="info-header">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <h6>Información del Quiz</h6>
+                    </div>
+                    <div class="info-content">
+                        <div class="quiz-details">
+                            {% if quiz_description %}
+                            <p class="mb-2">{{ quiz_description }}</p>
+                            {% endif %}
+                            <div class="detail-row">
+                                <span class="detail-label">Tiempo por pregunta:</span>
+                                <span class="detail-value">{{ time_per_question or '30' }}s</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Tipo de puntuación:</span>
+                                <span class="detail-value">Velocidad + Precisión</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Estado de conexión -->
+                <div class="connection-status" id="connection-status-panel">
+                    <div class="status-connected" id="connection-status">
+                        <i class="fas fa-wifi"></i> Conectado
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/quiz-client.js') }}"></script>
+<script>
+    // Marcar el body como página de lobby
+    document.body.classList.add('lobby-page');
+    
+    // Variables del lobby
+    let lobbySocket = null;
+    let sessionId = '{{ session_id }}';
+    let participantName = '{{ participant_name }}';
+    
+    // Inicializar conexión del lobby
+    function initializeLobby() {
+        if (window.quizClient) {
+            // El QuizClient ya maneja la conexión
+            lobbySocket = window.quizClient.socket;
+        } else {
+            // Conexión manual si no está disponible QuizClient
+            lobbySocket = io();
+        }
+        
+        // Eventos específicos del lobby
+        lobbySocket.on('participant_joined', handleParticipantJoined);
+        lobbySocket.on('participant_left', handleParticipantLeft);
+        lobbySocket.on('participants_list', updateParticipantsList);
+        lobbySocket.on('quiz_starting', handleQuizStarting);
+        lobbySocket.on('session_closed', handleSessionClosed);
+        
+        // Solicitar lista inicial de participantes
+        lobbySocket.emit('get_participants', { session_id: sessionId });
+    }
+    
+    // Manejar nuevo participante
+    function handleParticipantJoined(data) {
+        updateParticipantsList(data.participants);
+        showAlert(`${data.participant.name} se unió al lobby`, 'info');
+        updateParticipantCount(data.participants.length);
+    }
+    
+    // Manejar participante que se va
+    function handleParticipantLeft(data) {
+        updateParticipantsList(data.participants);
+        showAlert(`${data.participant.name} salió del lobby`, 'warning');
+        updateParticipantCount(data.participants.length);
+    }
+    
+    // Actualizar lista de participantes
+    function updateParticipantsList(participants) {
+        const participantsList = document.getElementById('participants-list');
+        if (!participantsList) return;
+        
+        if (participants.length === 0) {
+            participantsList.innerHTML = `
+                <div class="text-center text-muted">
+                    <i class="fas fa-user-slash me-2"></i>
+                    No hay otros participantes
+                </div>
+            `;
+            return;
+        }
+        
+        const html = participants.map((participant, index) => `
+            <div class="participant-card" data-participant-id="${participant.id}">
+                <div class="participant-info">
+                    <i class="fas fa-user"></i>
+                    <span class="participant-name">${participant.name}</span>
+                    ${participant.name === participantName ? '<span class="badge bg-primary ms-2">Tú</span>' : ''}
+                </div>
+                <div class="participant-status">
+                    <span class="status-indicator status-connected"></span>
+                </div>
+            </div>
+        `).join('');
+        
+        participantsList.innerHTML = html;
+        updateParticipantCount(participants.length);
+    }
+    
+    // Actualizar contador de participantes
+    function updateParticipantCount(count) {
+        const countElements = document.querySelectorAll('#participants-count, #participants-count-badge');
+        countElements.forEach(element => {
+            element.textContent = count;
+        });
+    }
+    
+    // Manejar inicio del quiz
+    function handleQuizStarting(data) {
+        updateStatusMessage('¡El quiz está comenzando!', 'success');
+        
+        // Mostrar countdown si está disponible
+        if (data.countdown) {
+            let timeLeft = data.countdown;
+            const countdownInterval = setInterval(() => {
+                updateStatusMessage(`¡Comenzando en ${timeLeft} segundos!`, 'info');
+                timeLeft--;
+                
+                if (timeLeft < 0) {
+                    clearInterval(countdownInterval);
+                    updateStatusMessage('¡El quiz ha comenzado!', 'success');
+                    // Redirigir a la página del quiz
+                    setTimeout(() => {
+                        window.location.href = `/quiz/${sessionId}`;
+                    }, 1000);
+                }
+            }, 1000);
+        } else {
+            // Redirigir inmediatamente
+            setTimeout(() => {
+                window.location.href = `/quiz/${sessionId}`;
+            }, 2000);
+        }
+    }
+    
+    // Manejar cierre de sesión
+    function handleSessionClosed(data) {
+        updateStatusMessage('La sesión ha sido cerrada por el moderador', 'danger');
+        
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 3000);
+    }
+    
+    // Actualizar mensaje de estado
+    function updateStatusMessage(message, type = 'info') {
+        const statusMessage = document.getElementById('status-message');
+        const statusText = document.getElementById('status-text');
+        
+        if (statusMessage && statusText) {
+            statusMessage.className = `status-message mb-4 alert alert-${type}`;
+            statusText.textContent = message;
+        }
+    }
+    
+    // Salir del lobby
+    function leaveLobby() {
+        if (confirm('¿Estás seguro de que quieres salir del lobby?')) {
+            if (lobbySocket) {
+                lobbySocket.emit('leave_session', { session_id: sessionId });
+            }
+            window.location.href = '/';
+        }
+    }
+    
+    // Inicializar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeLobby();
+        
+        // Configurar botón de salir
+        const leaveBtn = document.getElementById('leave-btn');
+        if (leaveBtn) {
+            leaveBtn.addEventListener('click', leaveLobby);
+        }
+        
+        // Verificar conexión periódicamente
+        setInterval(() => {
+            if (lobbySocket && !lobbySocket.connected) {
+                updateStatusMessage('Conexión perdida. Intentando reconectar...', 'warning');
+            }
+        }, 5000);
+    });
+</script>
+                    <h5>
+                        <i class="fas fa-list me-2"></i>
+                        Participantes Conectados
+                    </h5>
+                    <div id="participantsList" class="list-group list-group-flush">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+                </div>
+                
+                <!-- Mensajes de estado -->
+                <div id="statusMessages" class="mb-4">
+                    <div class="alert alert-secondary">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Esperando a que el administrador inicie el quiz...
+                    </div>
+                </div>
+                
+                <!-- Countdown cuando el quiz esté por empezar -->
+                <div id="countdownSection" class="d-none">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-rocket me-2"></i>
+                        ¡El quiz comenzará en:
+                    </div>
+                    <div class="timer-circle mx-auto mb-3">
+                        <span id="countdownTimer">3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Instrucciones -->
+        <div class="mt-4">
+            <div class="card bg-light">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Instrucciones
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Responde las preguntas lo más rápido posible
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Las respuestas más rápidas obtienen más puntos
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Mantén tu dispositivo conectado a WiFi
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-check text-success me-2"></i>
+                            ¡Diviértete y buena suerte!
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const participantCount = document.getElementById('participantCount');
+    const participantsList = document.getElementById('participantsList');
+    const quizStatus = document.getElementById('quizStatus');
+    const statusMessages = document.getElementById('statusMessages');
+    const countdownSection = document.getElementById('countdownSection');
+    const countdownTimer = document.getElementById('countdownTimer');
+    
+    // Inicializar Socket.IO
+    const socket = initSocket();
+    
+    // Unirse a la sesión
+    socket.emit('join_session', {
+        session_id: '{{ session_id }}',
+        participant_id: '{{ participant_id }}'
+    });
+    
+    // Escuchar eventos del servidor
+    socket.on('session_state', function(data) {
+        updateQuizStatus(data.state);
+    });
+    
+    socket.on('participant_joined', function(data) {
+        participantCount.textContent = data.participant_count;
+        addParticipantToList(data.name);
+        showAlert(`${data.name} se ha unido`, 'success');
+    });
+    
+    socket.on('state_change', function(data) {
+        updateQuizStatus(data.state);
+        
+        if (data.state === 'starting') {
+            showStartingCountdown();
+        } else if (data.state === 'question') {
+            // Redirigir a la interfaz del quiz
+            window.location.href = `/quiz/{{ participant_id }}`;
+        }
+    });
+    
+    socket.on('countdown_tick', function(seconds) {
+        if (countdownTimer) {
+            countdownTimer.textContent = seconds;
+        }
+    });
+    
+    socket.on('quiz_stopped', function(data) {
+        showAlert(data.message, 'warning');
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 3000);
+    });
+    
+    // Funciones auxiliares
+    function updateQuizStatus(state) {
+        const statusMap = {
+            'waiting': {
+                indicator: 'status-waiting',
+                text: 'Esperando jugadores',
+                icon: 'fa-hourglass-half'
+            },
+            'starting': {
+                indicator: 'status-active',
+                text: 'Iniciando...',
+                icon: 'fa-rocket'
+            },
+            'question': {
+                indicator: 'status-active',
+                text: 'En progreso',
+                icon: 'fa-play'
+            },
+            'finished': {
+                indicator: 'status-finished',
+                text: 'Finalizado',
+                icon: 'fa-flag-checkered'
+            }
+        };
+        
+        const status = statusMap[state] || statusMap['waiting'];
+        
+        quizStatus.innerHTML = `
+            <span class="status-indicator ${status.indicator}"></span>
+            <span>${status.text}</span>
+        `;
+    }
+    
+    function addParticipantToList(name) {
+        const listItem = document.createElement('div');
+        listItem.className = 'list-group-item d-flex align-items-center';
+        listItem.innerHTML = `
+            <i class="fas fa-user text-primary me-2"></i>
+            <span>${name}</span>
+            <i class="fas fa-circle text-success ms-auto" style="font-size: 0.7rem;"></i>
+        `;
+        participantsList.appendChild(listItem);
+    }
+    
+    function showStartingCountdown() {
+        statusMessages.innerHTML = `
+            <div class="alert alert-success">
+                <i class="fas fa-rocket me-2"></i>
+                ¡El quiz está comenzando!
+            </div>
+        `;
+        
+        countdownSection.classList.remove('d-none');
+    }
+    
+    // Obtener información inicial
+    fetch(`/api/session/{{ session_id }}/status`)
+        .then(response => response.json())
+        .then(data => {
+            participantCount.textContent = data.participants_count || 0;
+            updateQuizStatus(data.state);
+        })
+        .catch(error => {
+            console.error('Error al obtener estado inicial:', error);
+        });
+    
+    // Heartbeat para mantener conexión
+    setInterval(() => {
+        socket.emit('heartbeat', {
+            participant_id: '{{ participant_id }}',
+            session_id: '{{ session_id }}'
+        });
+    }, 30000); // Cada 30 segundos
+});
+</script>
+{% endblock %}

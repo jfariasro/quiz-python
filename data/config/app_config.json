@@ -1,0 +1,8 @@
+{
+    "app_name": "Plataforma de Quizzes Kahoot!",
+    "version": "1.0.0",
+    "debug": true,
+    "max_participants": 20,
+    "default_question_time": 30,
+    "default_points": 100
+}
