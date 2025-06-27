@@ -318,6 +318,14 @@ class QuizAdminApp:
         )
         self.start_quiz_btn.pack(side="left", padx=5)
         
+        self.start_game_btn = ctk.CTkButton(
+            control_frame,
+            text="🎮 Iniciar Juego",
+            command=self.start_game,
+            state="disabled"
+        )
+        self.start_game_btn.pack(side="left", padx=5)
+        
         self.stop_quiz_btn = ctk.CTkButton(
             control_frame,
             text="⏹️ Detener Quiz",
@@ -626,7 +634,8 @@ class QuizAdminApp:
             self.quiz_state_var.set("Esperando participantes")
             self.start_quiz_btn.configure(state="disabled")
             self.stop_quiz_btn.configure(state="normal")
-            self.next_question_btn.configure(state="normal")
+            # Habilitar el botón de iniciar juego ahora que tenemos una sesión
+            self.start_game_btn.configure(state="normal")
             
             # Mostrar código de sesión en una ventana emergente
             code_message = f"¡Quiz iniciado!\n\nCódigo de sesión: {self.current_session_id}\n\nComparte este código con los participantes para que puedan unirse al quiz."
@@ -657,6 +666,7 @@ class QuizAdminApp:
             self.start_quiz_btn.configure(state="normal")
             self.stop_quiz_btn.configure(state="disabled")
             self.next_question_btn.configure(state="disabled")
+            self.start_game_btn.configure(state="disabled")
             
             # Limpiar lista de participantes
             for item in self.participants_tree.get_children():
@@ -766,6 +776,58 @@ class QuizAdminApp:
             logger.error(f"Error al guardar configuración: {e}")
             messagebox.showerror("Error", f"Error al guardar configuración: {e}")
     
+    def setup_game_controls(self):
+        """Configurar controles del juego."""
+        pass  # TODO: Implementar configuración de controles del juego
+    
+    def start_game(self):
+        """Iniciar el juego cuando los participantes están listos en el lobby."""
+        try:
+            if not self.current_session_id:
+                messagebox.showwarning("Advertencia", "No hay una sesión de quiz activa")
+                return
+            
+            # Obtener información de la sesión 
+            session_info = get_session_info(self.current_session_id)
+            if not session_info:
+                messagebox.showerror("Error", "No se pudo obtener información de la sesión")
+                return
+            
+            # Verificar que hay participantes
+            participants_count = len(session_info.get('participants', []))
+            if participants_count == 0:
+                messagebox.showwarning("Advertencia", "No hay participantes en el lobby")
+                return
+            
+            # Enviar comando para iniciar el juego
+            import socketio
+            sio = socketio.Client()
+            
+            try:
+                # Conectar al servidor local
+                sio.connect('http://localhost:5000')
+                
+                # Emitir evento para iniciar el juego
+                sio.emit('admin_start_game', {'session_id': self.current_session_id})
+                
+                # Desconectar
+                sio.disconnect()
+                
+                # Actualizar UI
+                self.quiz_state_var.set("En juego")
+                self.start_game_btn.configure(state="disabled")
+                self.next_question_btn.configure(state="normal")
+                
+                messagebox.showinfo("Juego iniciado", f"El juego ha comenzado para {participants_count} participantes")
+                
+            except Exception as e:
+                logger.error(f"Error al conectar con el servidor: {e}")
+                messagebox.showerror("Error", f"Error al comunicarse con el servidor: {e}")
+                
+        except Exception as e:
+            logger.error(f"Error al iniciar juego: {e}")
+            messagebox.showerror("Error", f"Error al iniciar juego: {e}")
+            
     def copy_session_code(self):
         """Copiar código de sesión al portapapeles."""
         if self.current_session_id:

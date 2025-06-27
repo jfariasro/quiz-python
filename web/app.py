@@ -217,18 +217,27 @@ def register_routes(app: Flask):
             # Verificar participante
             active_sessions = quiz_manager.get_active_sessions()
             if not active_sessions:
-                logger.warning("No hay sesiones activas para quiz_interface")
+                logger.warning(f"No hay sesiones activas para el participante {participant_id}")
                 return redirect(url_for('index'))
             
-            session = quiz_manager.get_session(active_sessions[0])
+            # Buscar en qué sesión está este participante
+            session = None
+            session_id = None
+            for sess_id in active_sessions:
+                curr_session = quiz_manager.get_session(sess_id)
+                if curr_session and participant_id in curr_session.participants:
+                    session = curr_session
+                    session_id = sess_id
+                    break
+                    
+            # Si no se encontró el participante en ninguna sesión
             if not session:
-                logger.warning(f"No se encontró sesión para quiz_interface")
-                return redirect(url_for('index'))
+                logger.warning(f"Participante {participant_id} no encontrado en ninguna sesión activa")
+                return render_template('error_fixed.html',
+                               error_code=404,
+                               error_message='Participante no encontrado. Por favor, vuelve a unirte al quiz.',
+                               participant_id=None)
                 
-            if participant_id not in session.participants:
-                logger.warning(f"Participante {participant_id} no encontrado en la sesión")
-                return redirect(url_for('index'))
-            
             participant = session.participants[participant_id]
             
             # Obtener título del quiz de forma segura
@@ -236,17 +245,23 @@ def register_routes(app: Flask):
             if hasattr(session, 'quiz_data') and isinstance(session.quiz_data, dict):
                 quiz_title = session.quiz_data.get('title', 'Quiz')
             
+            # Contar el número total de preguntas
+            question_count = 0
+            if hasattr(session, 'quiz_data') and isinstance(session.quiz_data, dict):
+                question_count = len(session.quiz_data.get('questions', []))
+            
             return render_template('quiz.html',
-                                participant_id=participant_id,
-                                participant_name=participant['name'],
-                                session_id=session.session_id,
-                                quiz_title=quiz_title)
+                               participant_id=participant_id,
+                               participant_name=participant['name'],
+                               session_id=session_id,
+                               quiz_title=quiz_title,
+                               question_count=question_count)
         except Exception as e:
-            logger.error(f"Error en quiz_interface: {e}", exc_info=True)
+            logger.error(f"Error en quiz_interface para {participant_id}: {e}", exc_info=True)
             return render_template('error_fixed.html', 
-                                error_code=500,
-                                error_message='Error al cargar el quiz. Vuelve a intentarlo.',
-                                participant_id=participant_id)
+                               error_code=500,
+                               error_message='Error al cargar el quiz. Vuelve a intentarlo.',
+                               participant_id=participant_id)
     
     @app.route('/api/session/status')
     def session_status_general():
@@ -403,12 +418,20 @@ def register_socketio_events(socketio: SocketIO):
             return
         
         session = quiz_manager.get_session(session_id)
-        if not session or participant_id not in session.participants:
-            emit('error', {'message': 'Sesión o participante no válido'})
+        if not session:
+            emit('error', {'message': 'Sesión no válida'})
+            return
+            
+        if participant_id not in session.participants:
+            logger.warning(f"Intento de conexión de participante no registrado: {participant_id}")
+            emit('error', {'message': 'Participante no válido'})
             return
         
         # Unir al room de la sesión
         join_room(session_id)
+        
+        # Registrar el sid para este participante
+        session.participants[participant_id]['socket_id'] = request.sid
         
         # Enviar estado actual
         emit('session_state', {
@@ -416,6 +439,27 @@ def register_socketio_events(socketio: SocketIO):
             'current_question': session.current_question_index,
             'total_questions': len(session.quiz_data.get('questions', []))
         })
+        
+        # Si la sesión está en progreso, enviar la pregunta actual
+        if session.state in [QuizState.QUESTION, QuizState.COLLECTING] and session.current_question_index >= 0:
+            try:
+                current_question = session.quiz_data['questions'][session.current_question_index]
+                
+                # Calcular tiempo restante
+                elapsed_time = time.time() - session.question_start_time
+                time_limit = session.settings.get('question_time_limit', 30)
+                remaining_time = max(1, time_limit - int(elapsed_time))
+                
+                # Enviar pregunta actual
+                emit('question_started', {
+                    'question_index': session.current_question_index,
+                    'question': current_question['question'],
+                    'options': current_question['options'],
+                    'time_limit': remaining_time
+                })
+                logger.info(f"Pregunta actual enviada a participante que se une en curso: {participant_id}")
+            except Exception as e:
+                logger.error(f"Error enviando pregunta actual a participante nuevo: {e}")
         
         logger.debug(f"Participante {participant_id} unido a sesión {session_id}")
     
@@ -474,11 +518,11 @@ def register_socketio_events(socketio: SocketIO):
 
     @socketio.on('get_current_question')
     def handle_get_current_question(data):
-        """Obtener la pregunta actual si el participante se ha perdido."""
+        """Enviar pregunta actual al participante que la solicita."""
         session_id = data.get('session_id')
         participant_id = data.get('participant_id')
         
-        if not session_id or not participant_id:
+        if not all([session_id, participant_id]):
             emit('error', {'message': 'Datos faltantes'})
             return
         
@@ -487,16 +531,10 @@ def register_socketio_events(socketio: SocketIO):
             emit('error', {'message': 'Sesión no encontrada'})
             return
         
+        # Verificar si el participante está registrado
         if participant_id not in session.participants:
-            emit('error', {'message': 'Participante no encontrado'})
+            emit('error', {'message': 'Participante no válido'})
             return
-            
-        # Enviar el estado actual de la sesión
-        emit('session_state', {
-            'state': session.state.value,
-            'current_question': session.current_question_index,
-            'total_questions': len(session.quiz_data.get('questions', []))
-        })
         
         # Si la sesión está en una pregunta, enviar la pregunta actual
         if session.state in [QuizState.QUESTION, QuizState.COLLECTING] and session.current_question_index >= 0:
@@ -516,10 +554,49 @@ def register_socketio_events(socketio: SocketIO):
                     'time_limit': remaining_time
                 })
                 
-                logger.info(f"Pregunta actual enviada a participante {participant_id}")
+                logger.info(f"Pregunta actual enviada a participante {participant_id} por solicitud")
             except Exception as e:
                 logger.error(f"Error al enviar pregunta actual: {e}")
                 emit('error', {'message': 'Error al cargar la pregunta actual'})
+        elif session.state == QuizState.WAITING:
+            emit('session_state', {
+                'state': session.state.value,
+                'message': 'Esperando a que el moderador inicie el quiz'
+            })
+        elif session.state == QuizState.RESULTS:
+            emit('session_state', {
+                'state': session.state.value,
+                'message': 'Mostrando resultados de la pregunta'
+            })
+
+    @socketio.on('admin_start_game')
+    def handle_admin_start_game(data):
+        """Administrador inicia el juego después de que los participantes están en el lobby."""
+        session_id = data.get('session_id')
+        
+        if not session_id:
+            emit('error', {'message': 'ID de sesión requerido'})
+            return
+        
+        session = quiz_manager.get_session(session_id)
+        if not session:
+            emit('error', {'message': 'Sesión no encontrada'})
+            return
+        
+        # Iniciar el quiz
+        success = session.start_quiz()
+        
+        if success:
+            logger.info(f"Administrador inició el juego para la sesión: {session_id}")
+            # Notificar a todos los participantes
+            socketio.emit('quiz_starting', {
+                'countdown': 3,  # Countdown de 3 segundos
+                'message': 'El juego está comenzando'
+            }, room=session_id)
+            
+            emit('admin_game_started', {'success': True})
+        else:
+            emit('error', {'message': 'No se pudo iniciar el juego'})
 
 def setup_session_callbacks(session_id: str):
     """Configurar callbacks para eventos de la sesión."""

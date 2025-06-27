@@ -24,6 +24,21 @@ class QuizClient {
         this.socket.on('connect', () => {
             console.log('Conectado al servidor de quiz');
             this.showConnectionStatus(true);
+            
+            // Si ya tenemos un sessionId y participantId, reconectar
+            if (this.participantId && this.sessionId) {
+                console.log('Reconectando a la sesión existente...');
+                this.socket.emit('join_session', {
+                    session_id: this.sessionId,
+                    participant_id: this.participantId
+                });
+                
+                // Solicitar la pregunta actual si estamos en medio de un quiz
+                this.socket.emit('get_current_question', {
+                    session_id: this.sessionId,
+                    participant_id: this.participantId
+                });
+            }
         });
         
         this.socket.on('disconnect', () => {

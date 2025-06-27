@@ -262,7 +262,7 @@ class QuizSession:
         Returns:
             True si se procesó correctamente, False en caso contrario
         """
-        if self.state != QuizState.COLLECTING:
+        if self.state not in [QuizState.QUESTION, QuizState.COLLECTING]:
             logger.warning(f"No se aceptan respuestas en estado: {self.state}")
             return False
         
@@ -290,6 +290,25 @@ class QuizSession:
         logger.debug(f"Respuesta recibida de {participant_id}: {answer}")
         self._emit_event('answer_received', answer_data)
         
+        # Si todos los participantes conectados respondieron, finalizar la pregunta antes
+        all_answered = True
+        for p_id, participant in self.participants.items():
+            if participant['status'] == ParticipantStatus.WAITING:
+                all_answered = False
+                break
+        
+        # Finalizar pregunta si todos han respondido y hay al menos una respuesta
+        if all_answered and len(self.current_answers) > 0:
+            remaining_time = self.settings.get('question_time_limit', 30) - (time.time() - self.question_start_time)
+            if remaining_time > 2:  # Deja al menos 2 segundos de margen
+                logger.info("Finalizando pregunta anticipadamente - todos han respondido")
+                # Cancelar timer actual
+                with self.timer_lock:
+                    if self.timer_thread:
+                        self.timer_thread.cancel()
+                # Finalizar con pequeño retraso para permitir animaciones
+                threading.Timer(1.5, self._end_question).start()
+        
         return True
     
     def _start_countdown(self, seconds: int, callback: Callable):
@@ -308,45 +327,49 @@ class QuizSession:
         self._start_question()
     
     def _start_question(self):
-        """Iniciar pregunta actual."""
-        if self.current_question_index >= len(self.quiz_data.get('questions', [])):
+        """Iniciar una nueva pregunta."""
+        if self.current_question_index >= len(self.quiz_data['questions']):
+            # No hay más preguntas, terminar quiz
             self._finish_quiz()
-            return
+            return False
         
-        # Limpiar respuestas anteriores
-        self.current_answers.clear()
-        
-        # Resetear estado de participantes
-        for participant in self.participants.values():
-            participant['status'] = ParticipantStatus.WAITING
-        
-        # Cambiar estado y configurar timing
+        # Cambiar estado
         self._change_state(QuizState.QUESTION)
         self.question_start_time = time.time()
         
-        # Programar fin de pregunta
-        question_time = self.settings['question_time_limit']
-        with self.timer_lock:
-            if self.timer_thread:
-                # Cancelar timer anterior si existe
-                pass
-            
-            self.timer_thread = threading.Timer(
-                question_time,
-                self._end_question_time
-            )
-            self.timer_thread.start()
-        
+        # Obtener pregunta actual
         current_question = self.quiz_data['questions'][self.current_question_index]
-        logger.info(f"Pregunta {self.current_question_index + 1} iniciada")
         
-        # Cambiar a estado de recolección
-        self._change_state(QuizState.COLLECTING)
-        self._emit_event('question_started', {
+        # Preparar para recibir respuestas
+        self.current_answers = {}
+        
+        # Actualizar estado de los participantes a "esperando respuesta"
+        for participant_id in self.participants:
+            if self.participants[participant_id]['status'] != ParticipantStatus.DISCONNECTED:
+                self.participants[participant_id]['status'] = ParticipantStatus.WAITING
+        
+        # Obtener tiempo límite de la pregunta
+        time_limit = self.settings.get('question_time_limit', 30)
+        
+        # Notificar que se ha iniciado una pregunta
+        question_data = {
             'question_index': self.current_question_index,
             'question': current_question,
-            'time_limit': question_time
-        })
+            'time_limit': time_limit
+        }
+        self._emit_event('question_started', question_data)
+        logger.info(f"Iniciando pregunta {self.current_question_index + 1} de {len(self.quiz_data['questions'])}")
+        
+        # Cambiar estado para recolectar respuestas
+        self._change_state(QuizState.COLLECTING)
+        
+        # Iniciar temporizador para finalizar pregunta
+        with self.timer_lock:
+            self.timer_thread = threading.Timer(time_limit, self._end_question)
+            self.timer_thread.daemon = True
+            self.timer_thread.start()
+        
+        return True
     
     def _end_question_time(self):
         """Terminar tiempo de pregunta y mostrar resultados."""
